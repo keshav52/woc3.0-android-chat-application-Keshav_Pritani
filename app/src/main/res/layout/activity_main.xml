@@ -19,13 +19,13 @@
         android:id="@+id/SGVView"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:background="@drawable/ic_wave"
+        android:background="@drawable/ic_wave_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topView" />
 
     <TextView
-        android:id="@+id/welcomeTextView"
+        android:id="@+id/registerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/autour_one"
@@ -64,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@+id/SGVView" />
 
     <EditText
-        android:id="@+id/passwordTextBox"
+        android:id="@+id/nameTextBox"
         android:layout_width="340dp"
         android:layout_height="71dp"
         android:layout_marginStart="99dp"
@@ -99,21 +99,22 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/loginBtn"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordTextBox" />
+        app:layout_constraintTop_toBottomOf="@+id/nameTextBox" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/loginBtn"
         android:layout_width="86dp"
         android:layout_height="89dp"
         android:layout_marginTop="72dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:contentDescription="@string/todo"
+        android:onClick="login"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/nameTextBox"
         app:srcCompat="@drawable/ic_action_name" />
 
     <TextView
@@ -137,6 +138,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
         android:fontFamily="@font/autour_one"
+        android:onClick="register"
         android:text="@string/sign_up"
         android:textColor="#F6A874"
         android:textSize="16sp"

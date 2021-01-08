@@ -2,8 +2,10 @@ package com.example.chatapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
@@ -31,4 +33,9 @@ public class MessageScreen extends AppCompatActivity {
 //        navigationTabStrip.setOnPageChangeListener(...);
 //        navigationTabStrip.setOnTabStripSelectedIndexListener(...);
     }
+
+    public void chat(View view)
+    {
+        Intent intent = new Intent(this,ChatActivity.class);
+        startActivity(intent);}
 }

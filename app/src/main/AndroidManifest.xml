@@ -9,18 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication">
-        <activity android:name=".MessageScreen">
-        </activity>
+        <activity android:name=".Register"></activity>
         <activity android:name=".MainActivity">
-
-        </activity>
-        <activity android:name=".ChatActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MessageScreen" />
+        <activity android:name=".ChatActivity" />
     </application>
 
 </manifest>
