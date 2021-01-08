@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="titles">titles
+        <item>Chats</item>
+        <item>Contacts</item>
+        <item>Favorite</item>
+    </string-array>
+</resources>
