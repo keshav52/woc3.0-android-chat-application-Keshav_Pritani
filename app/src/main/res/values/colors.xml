@@ -10,5 +10,5 @@
     <color name="colorPrimary">#FFFFD700</color>
     <color name="colorPrimaryCont">#0F32DD</color>
     <color name="colorPrimaryDark">#FF6600</color>
-    
+    <color name="colorPrimaryLight">#F6A874</color>
 </resources>
