@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
     <View
         android:id="@+id/topView"
@@ -82,7 +82,7 @@
             android:drawablePadding="16sp"
             android:ems="10"
             android:focusable="true"
-            android:hint="@string/enter_your_phone_number"
+            android:hint="Enter Your Phone"
             android:inputType="phone"
             android:padding="16sp"
             android:textSize="20sp"
@@ -117,26 +117,25 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/passwordTextBox"
+            android:id="@+id/stautsTextBox"
             android:layout_width="340dp"
             android:layout_height="71dp"
             android:layout_marginStart="99dp"
             android:layout_marginLeft="99dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="103dp"
             android:layout_marginRight="103dp"
             android:autofillHints=""
             android:background="@drawable/round_text_box"
-            android:drawableStart="@drawable/ic_baseline_lock_24"
-            android:drawableLeft="@drawable/ic_baseline_lock_24"
+            android:drawableStart="@drawable/ic_baseline_emoji_emotions_24"
+            android:drawableLeft="@drawable/ic_baseline_emoji_emotions_24"
             android:drawablePadding="16sp"
             android:ems="10"
-            android:hint="@string/enter_your_password"
-            android:inputType="textPassword"
+            android:hint="Enter whatever you like.."
             android:padding="16sp"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.427"
+            app:layout_constraintHorizontal_bias="0.488"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/phoneTextBox" />
 
@@ -162,8 +161,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center_horizontal"
-            android:text="Enter the 4 digit OTP"
+            android:text="Enter the 6 digit OTP"
             android:textAlignment="center"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/pinView"
             app:layout_constraintEnd_toEndOf="@+id/pinView"
@@ -182,7 +182,7 @@
             android:inputType="number"
             android:padding="10dp"
             android:textSize="18sp"
-            app:itemCount="4"
+            app:itemCount="6"
             app:itemHeight="48dp"
             app:itemRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -193,11 +193,13 @@
             app:viewType="rectangle" />
 
         <TextView
+            android:id="@+id/resetTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            android:text="Didn't get the OTP? RESEND OTP."
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Didn't get the OTP?\nRESEND OTP."
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/pinView"
             app:layout_constraintHorizontal_bias="0.473"

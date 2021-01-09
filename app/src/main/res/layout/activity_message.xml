@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MessageScreen">
+    tools:context=".MessageActivity">
 
-    <TextView
+   <!-- <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -21,23 +21,32 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/imageView2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
         android:layout_width="43dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="TODO"
-        android:rotation="90"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.592"
-        app:srcCompat="@drawable/menu_vertical_50px" />
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorPrimaryFore"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toTopOf="@+id/profile_image" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -74,11 +83,11 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toStartOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
         app:nts_active_color="#FFFFFF"
         app:nts_animation_duration="300"
         app:nts_color="#FF0000"
@@ -132,8 +141,8 @@
                     android:id="@+id/textView41"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="116dp"
-                    android:layout_marginLeft="116dp"
+                    android:layout_marginStart="68dp"
+                    android:layout_marginLeft="68dp"
                     android:fontFamily="@font/autour_one"
                     android:text="12/05"
                     android:textColor="@color/teal_200"
@@ -200,8 +209,8 @@
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="116dp"
-                    android:layout_marginLeft="116dp"
+                    android:layout_marginStart="56dp"
+                    android:layout_marginLeft="56dp"
                     android:fontFamily="@font/autour_one"
                     android:text="12/05"
                     android:textColor="@color/teal_200"
@@ -209,7 +218,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/tv_name"
                     app:layout_constraintStart_toEndOf="@+id/tv_name"
                     app:layout_constraintTop_toTopOf="@+id/tv_name"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -242,5 +251,18 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
+
+    <View
+        android:id="@+id/menuView"
+        android:layout_width="50dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/ic_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.964"
+        app:layout_constraintStart_toEndOf="@+id/username"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
