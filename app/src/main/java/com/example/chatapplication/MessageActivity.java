@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapplication.Adapter.MessageActivityAdapter;
 import com.example.chatapplication.Model.User;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,22 +39,14 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-        final NavigationTabStrip navigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts);
+        final NavigationTabStrip navigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts1);
         navigationTabStrip.setTabIndex(0, true);
-       /* navigationTabStrip.setTitleSize(50);
-//        navigationTabStrip.setTitles("Chats", "Contacts", "Favorite");
-        navigationTabStrip.setStripColor(Color.RED);
-        navigationTabStrip.setStripWeight(6);
-        navigationTabStrip.setStripFactor(2);
-        navigationTabStrip.setStripType(NavigationTabStrip.StripType.LINE);
-        navigationTabStrip.setStripGravity(NavigationTabStrip.StripGravity.BOTTOM);
-        navigationTabStrip.setTypeface("fonts/typeface.ttf");
-        navigationTabStrip.setCornersRadius(3);
-        navigationTabStrip.setAnimationDuration(300);
-        navigationTabStrip.setInactiveColor(Color.GRAY);
-        navigationTabStrip.setActiveColor(Color.WHITE);*/
-//        navigationTabStrip.setOnPageChangeListener(...);
-//        navigationTabStrip.setOnTabStripSelectedIndexListener(...);
+        ViewPager mViewPager = findViewById(R.id.viewPage);
+        MessageActivityAdapter adapterPager = new MessageActivityAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(adapterPager);
+        navigationTabStrip.setViewPager(mViewPager);
+        navigationTabStrip.setTabIndex(0, true);
+
 
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);

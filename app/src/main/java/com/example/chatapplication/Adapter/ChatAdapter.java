@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.example.chatapplication.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,9 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.chatapplication.ChatMessage;
+import com.example.chatapplication.R;
 
 import java.util.List;
 

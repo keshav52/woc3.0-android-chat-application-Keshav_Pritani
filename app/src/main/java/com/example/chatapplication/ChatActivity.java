@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.chatapplication.Adapter.ChatAdapter;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
