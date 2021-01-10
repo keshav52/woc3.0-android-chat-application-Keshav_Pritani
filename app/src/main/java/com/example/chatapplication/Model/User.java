@@ -2,25 +2,13 @@ package com.example.chatapplication.Model;
 
 public class User {
 
-    private String email;
+    private String phoneNo;
     private String id;
     private String username;
     private String imageURL;
     private String status;
     private String active;
 
-    public User(String id, String username, String imageURL, String status, String active, String email) {
-        this.id = id;
-        this.username = username;
-        this.imageURL = imageURL;
-        this.status = status;
-        this.active = active;
-        this.email = email;
-    }
-
-    public User() {
-
-    }
 
     public String getId() {
         return id;
@@ -34,17 +22,16 @@ public class User {
         return username;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email)
-    {
-        this.email = email;
-    }
-
     public void setUsername(String name) {
         this.username = name;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
     }
 
     public String getImageURL() {

@@ -44,26 +44,129 @@
         android:layout_height="71dp"
         android:layout_marginStart="99dp"
         android:layout_marginLeft="99dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="224dp"
         android:layout_marginEnd="103dp"
         android:layout_marginRight="103dp"
         android:autofillHints=""
         android:background="@drawable/round_text_box"
-        android:drawableStart="@drawable/ic_baseline_email_24"
-        android:drawableLeft="@drawable/ic_baseline_email_24"
+        android:drawableStart="@drawable/ic_baseline_smartphone_24"
+        android:drawableLeft="@drawable/ic_baseline_smartphone_24"
         android:drawablePadding="16sp"
         android:ems="10"
         android:focusable="true"
-        android:hint="Enter your Email"
-        android:inputType="textEmailAddress"
+        android:hint="Enter your Phone Number"
+        android:inputType="phone"
         android:padding="16sp"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SGVView" />
 
-    <EditText
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout1"
+        android:layout_width="409dp"
+        android:layout_height="234dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SGVView"
+        app:layout_constraintVertical_bias="0.362"
+        tools:visibility="invisible">
+
+        <TextView
+            android:id="@+id/textView_noti"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:text="Enter the 6 digit OTP"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/pinView"
+            app:layout_constraintEnd_toEndOf="@+id/pinView"
+            app:layout_constraintStart_toStartOf="@+id/pinView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.chaos.view.PinView
+            android:id="@+id/pinView"
+            style="@style/PinWidget.PinView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:autoText="false"
+            android:inputType="number"
+            android:padding="10dp"
+            android:textSize="18sp"
+            app:itemCount="6"
+            app:itemHeight="48dp"
+            app:itemRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lineColor="@color/colorPrimary"
+            app:viewType="rectangle" />
+
+        <TextView
+            android:id="@+id/resetTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Didn't get the OTP?\nRESEND OTP."
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/pinView"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/pinView"
+            app:layout_constraintTop_toBottomOf="@+id/pinView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/signBT"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/button_background"
+        android:onClick="login"
+        android:text="Let's go!"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout1" />
+
+    <Button
+        android:id="@+id/registerBT"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/button_background1"
+        android:onClick="register"
+        android:text="Register"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signBT" />
+
+    <!--<EditText
         android:id="@+id/nameTextBox"
         android:layout_width="340dp"
         android:layout_height="71dp"
@@ -85,9 +188,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneTextBox" />
-
-    <TextView
+        app:layout_constraintTop_toBottomOf="@+id/phoneTextBox" />-->
+    <!--<TextView
         android:id="@+id/signInTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -103,8 +205,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTextBox" />
-
-    <ImageView
+-->
+    <!--<ImageView
         android:id="@+id/loginBtn"
         android:layout_width="86dp"
         android:layout_height="89dp"
@@ -115,8 +217,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTextBox"
         app:srcCompat="@drawable/ic_action_name" />
-
-    <TextView
+-->
+    <!--<TextView
         android:id="@+id/signInTextView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -127,9 +229,11 @@
         android:textColor="#F6A874"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintBaseline_toBaselineOf="@+id/signInTextView3"
         app:layout_constraintStart_toEndOf="@+id/signInTextView3" />
-
+-->
+    <!--
     <TextView
         android:id="@+id/signInTextView3"
         android:layout_width="wrap_content"
@@ -146,5 +250,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signInTextView"
         app:layout_constraintVertical_bias="0.578" />
-
+-->
 </androidx.constraintlayout.widget.ConstraintLayout>

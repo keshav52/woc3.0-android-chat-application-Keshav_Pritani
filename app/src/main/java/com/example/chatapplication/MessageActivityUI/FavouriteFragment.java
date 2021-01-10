@@ -13,14 +13,15 @@ import com.example.chatapplication.R;
 
 public class FavouriteFragment extends Fragment {
 
+    public static FavouriteFragment getInstance() {
+        return new FavouriteFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_favourite, container, false);
-    }
-    public static FavouriteFragment getInstance() {
-        return new FavouriteFragment();
     }
 }

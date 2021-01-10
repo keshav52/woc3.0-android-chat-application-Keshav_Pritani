@@ -30,12 +30,12 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Log.i("Keshav","keshav");
+        Log.i("Keshav", "keshav");
         initControls();
     }
 
     private void initControls() {
-        Log.i("Keshav","keshav");
+        Log.i("Keshav", "keshav");
         messagesContainer = (ListView) findViewById(R.id.messagesContainer);
         messageET = (EditText) findViewById(R.id.messageBox);
         sendBtn = (CardView) findViewById(R.id.sendButton);

@@ -19,7 +19,7 @@ import java.util.List;
 public class ChatAdapter extends BaseAdapter {
 
     private final List<ChatMessage> chatMessages;
-    private Activity context;
+    private final Activity context;
 
     public ChatAdapter(Activity context, List<ChatMessage> chatMessages) {
         this.context = context;
@@ -63,7 +63,7 @@ public class ChatAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        boolean myMsg = chatMessage.getIsme() ;//Just a dummy check
+        boolean myMsg = chatMessage.getIsme();//Just a dummy check
         //to simulate whether it me or other sender
         setAlignment(holder, myMsg);
         holder.txtMessage.setText(chatMessage.getMessage());
