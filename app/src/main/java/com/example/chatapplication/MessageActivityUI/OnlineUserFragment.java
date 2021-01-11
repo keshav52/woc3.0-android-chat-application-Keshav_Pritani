@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chatapplication.R;
 
-public class ContactsFragment extends Fragment {
+public class OnlineUserFragment extends Fragment {
 
-    public static ContactsFragment getInstance() {
-        return new ContactsFragment();
+    public static OnlineUserFragment getInstance() {
+        return new OnlineUserFragment();
     }
 
     @Nullable
@@ -22,6 +22,6 @@ public class ContactsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_contacts, container, false);
+        return inflater.inflate(R.layout.fragment_favourite, container, false);
     }
 }

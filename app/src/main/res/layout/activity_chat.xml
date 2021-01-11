@@ -33,24 +33,23 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginRight="8dp"
         app:cardCornerRadius="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5">
+        app:layout_constraintTop_toTopOf="@+id/imageView5">
 
-        <ImageView
-            android:id="@+id/imageView3"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image_chat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_baseline_login_24"
+            app:srcCompat="@drawable/ic_baseline_emoji_emotions_24"
             tools:ignore="VectorDrawableCompat" />
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/username_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -58,7 +57,7 @@
         android:layout_marginRight="8dp"
         android:fontFamily="@font/autour_one"
         android:text="Clara Menard"
-        android:textColor="@color/white"
+        android:textColor="@color/mainText"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,10 +69,10 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/autour_one"
         android:text="Online"
-        android:textColor="#CCC"
-        app:layout_constraintEnd_toEndOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        android:textColor="@color/textAlt"
+        app:layout_constraintEnd_toEndOf="@+id/username_chat"
+        app:layout_constraintStart_toStartOf="@+id/username_chat"
+        app:layout_constraintTop_toBottomOf="@+id/username_chat" />
     <!--<RelativeLayout
 
         android:layout_width="wrap_content"
@@ -83,7 +82,7 @@
     </RelativeLayout>-->
 
 
-    <LinearLayout
+    <!--<LinearLayout
 
         android:layout_width="410dp"
 
@@ -100,13 +99,13 @@
 
             android:layout_width="match_parent"
 
-            android:layout_height="match_parent"
+            android:layout_height="614dp"
 
             android:orientation="vertical"
 
             android:padding="20dp">
 
-            <ListView
+            &lt;!&ndash;<ListView
 
                 android:id="@+id/messagesContainer"
 
@@ -185,7 +184,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
-            </ListView>
+            </ListView>&ndash;&gt;
 
             <TextView
 
@@ -228,7 +227,7 @@
                 android:layout_marginTop="76dp"
                 android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent">
-<!--                app:layout_constraintTop_toBottomOf="@+id/textView6"-->
+                &lt;!&ndash;                app:layout_constraintTop_toBottomOf="@+id/textView6"&ndash;&gt;
 
 
                 <TextView
@@ -281,7 +280,7 @@
             </LinearLayout>
 
         </RelativeLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 
 
     <EditText
@@ -293,20 +292,22 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Type Your Message"
-        android:inputType="textPersonName"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:onClick="sendBTNClicked"
         app:cardBackgroundColor="#7987FA"
         app:cardCornerRadius="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintBottom_toBottomOf="@+id/messageBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/messageBox">
 
         <ImageView
             android:id="@+id/imageView7"
@@ -316,4 +317,26 @@
             app:srcCompat="@drawable/send" />
 
     </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/messageBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/messageBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recycler_view"
+        tools:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

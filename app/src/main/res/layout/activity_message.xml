@@ -14,10 +14,9 @@
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/menu"
         android:layout_gravity="start"
-        />
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/menu" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -78,17 +77,19 @@
             app:layout_constraintStart_toEndOf="@+id/username"
             app:layout_constraintTop_toTopOf="parent" />
 -->
-        <include android:id="@+id/toolbar" layout="@layout/toolbar" />
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
         <FrameLayout
             android:id="@+id/nts"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/frameLayout"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:elevation="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            android:elevation="40dp">
+            tools:targetApi="lollipop">
 
             <View
                 android:layout_width="match_parent"
@@ -108,45 +109,15 @@
                 app:nts_animation_duration="300"
                 app:nts_color="#4D66DD"
                 app:nts_corners_radius="2.5dp"
-                app:nts_factor="6"
+                app:nts_factor="3"
                 app:nts_gravity="bottom"
                 app:nts_inactive_color="@color/textAlt"
-                app:nts_size="16sp"
+                app:nts_size="14sp"
                 app:nts_titles="@array/titles"
-                app:nts_type="point"
+                app:nts_type="line"
                 app:nts_typeface="fonts/poppins_semibold_o.ttf"
                 app:nts_weight="7sp" />
 
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/two_corner_round"
-            app:layout_constraintBottom_toTopOf="@+id/viewPage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:contentDescription="TODO"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_add_24"
-                    tools:ignore="VectorDrawableCompat" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
 
         <androidx.viewpager.widget.ViewPager
