@@ -16,8 +16,7 @@
         android:layout_height="match_parent"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/menu"
-        android:layout_gravity="start"
-        />
+        android:layout_gravity="start"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
