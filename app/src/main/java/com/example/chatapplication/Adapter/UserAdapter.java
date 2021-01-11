@@ -27,7 +27,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private List<User> mUsers;
 //    private boolean ischat;
 
-    String theLastMessage;
 
     public UserAdapter(Context mContext, List<User> mUsers) {
         this.mUsers = mUsers;
@@ -73,13 +72,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             holder.img_off.setVisibility(View.GONE);
         }*/
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(mContext, ChatActivity.class);
-                    intent.putExtra("userid", user.getId());
-                    mContext.startActivity(intent);
-                }
+            holder.itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra("userid", user.getId());
+                mContext.startActivity(intent);
             });
         }
     }

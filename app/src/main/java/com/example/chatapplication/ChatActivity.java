@@ -1,6 +1,7 @@
 package com.example.chatapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,9 +16,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapplication.Adapter.ChatAdapter;
+import com.example.chatapplication.Model.Chat;
 import com.example.chatapplication.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,13 +31,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -55,7 +55,9 @@ public class ChatActivity extends AppCompatActivity {
     String userid;
     EditText text_send;
     RecyclerView recyclerView;
-    private CardView btn_send;
+
+    ChatAdapter messageAdapter;
+    List<Chat> mchats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
+                assert user != null;
                 username.setText(user.getUsername());
                 if (user.getImageURL().equals("default")){
                     profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -82,7 +85,7 @@ public class ChatActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
 
-//                readMesagges(fuser.getUid(), userid, user.getImageURL());
+                readMesagges(fuser.getUid(), userid, user.getImageURL());
             }
 
             @Override
@@ -92,10 +95,15 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-        btn_send = findViewById(R.id.sendButton);
+        CardView btn_send = findViewById(R.id.sendButton);
         text_send = findViewById(R.id.messageBox);
 
 
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         /*Log.i("Keshav", "keshav");
         initControls();*/
@@ -145,97 +153,62 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
 
-        /*final DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("Chatlist")
-                .child(userid)
-                .child(fuser.getUid());
-        chatRefReceiver.child("id").setValue(fuser.getUid());
+    private void readMesagges(final String myid, final String userid, final String imageurl){
+        mchats = new ArrayList<>();
 
-        final String msg = message;
-
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if (notify) {
-                    sendNotifiaction(receiver, user.getUsername(), msg);
+                mchats.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
+                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                        mchats.add(chat);
+                    }
+
+                    messageAdapter = new ChatAdapter(ChatActivity.this, mchats, imageurl);
+                    recyclerView.setAdapter(messageAdapter);
                 }
-                notify = false;
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });*/
-    }
-    /*private void initControls() {
-        Log.i("Keshav", "keshav");
-        messagesContainer = (ListView) findViewById(R.id.messagesContainer);
-        messageET = (EditText) findViewById(R.id.messageBox);
-        sendBtn = (CardView) findViewById(R.id.sendButton);
-
-        TextView meLabel = (TextView) findViewById(R.id.meLbl);
-        TextView companionLabel = (TextView) findViewById(R.id.friendLabel);
-        RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
-        companionLabel.setText("My Buddy");// Hard Coded
-        loadDummyHistory();
-
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String messageText = messageET.getText().toString();
-                if (TextUtils.isEmpty(messageText)) {
-                    return;
-                }
-
-                ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setId(122);//dummy
-                chatMessage.setMessage(messageText);
-                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                chatMessage.setMe(true);
-
-                messageET.setText("");
-
-                displayMessage(chatMessage);
-            }
         });
     }
 
-    public void displayMessage(ChatMessage message) {
-        adapter.add(message);
-        adapter.notifyDataSetChanged();
-        scroll();
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("active", status);
+
+        reference.updateChildren(hashMap);
     }
 
-    private void scroll() {
-        messagesContainer.setSelection(messagesContainer.getCount() - 1);
+    private void currentUser(String userid){
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
     }
 
-    private void loadDummyHistory() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("true");
+        currentUser(userid);
+    }
 
-        chatHistory = new ArrayList<ChatMessage>();
-
-        ChatMessage msg = new ChatMessage();
-        msg.setId(1);
-        msg.setMe(false);
-        msg.setMessage("Hi");
-        msg.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-        chatHistory.add(msg);
-        ChatMessage msg1 = new ChatMessage();
-        msg1.setId(2);
-        msg1.setMe(false);
-        msg1.setMessage("How r u doing???");
-        msg1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-        chatHistory.add(msg1);
-
-        adapter = new ChatAdapter(ChatActivity.this, new ArrayList<ChatMessage>());
-        messagesContainer.setAdapter(adapter);
-
-        for (int i = 0; i < chatHistory.size(); i++) {
-            ChatMessage message = chatHistory.get(i);
-            displayMessage(message);
-        }
-    }*/
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        reference.removeEventListener(seenListener);
+        status("false");
+        currentUser("none");
+    }
 }
