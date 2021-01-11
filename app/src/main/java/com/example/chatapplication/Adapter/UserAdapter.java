@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapplication.ChatActivity;
-import com.example.chatapplication.MessageActivity;
 import com.example.chatapplication.Model.User;
 import com.example.chatapplication.R;
 
@@ -25,13 +24,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private Context mContext;
     private List<User> mUsers;
-//    private boolean ischat;
+    private boolean ischat;
 
 
-    public UserAdapter(Context mContext, List<User> mUsers) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean ischat) {
         this.mUsers = mUsers;
         this.mContext = mContext;
-//        this.ischat = ischat;
+        this.ischat = ischat;
     }
 
     @NonNull
