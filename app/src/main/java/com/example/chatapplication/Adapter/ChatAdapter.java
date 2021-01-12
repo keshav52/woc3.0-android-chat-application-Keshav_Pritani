@@ -18,7 +18,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-//import com.example.chatapplication.Model.Chat;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
@@ -89,9 +88,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
-            /*img_on = itemView.findViewById(R.id.img_on);
-            img_off = itemView.findViewById(R.id.img_off);
-            last_msg = itemView.findViewById(R.id.last_msg);*/
+//            last_msg = itemView.findViewById(R.id.last_msg);
         }
 
     }

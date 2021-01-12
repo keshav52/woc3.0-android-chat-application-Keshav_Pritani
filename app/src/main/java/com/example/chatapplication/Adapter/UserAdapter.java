@@ -18,7 +18,6 @@ import com.example.chatapplication.R;
 
 import java.util.List;
 
-//import com.example.chatapplication.Model.Chat;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 

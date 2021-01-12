@@ -126,7 +126,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void sendBTNClicked(View view) {
-//        notify = true;
         String msg = text_send.getText().toString();
         if (!msg.equals("")){
             sendMessage(fuser.getUid(), userid, msg);
@@ -152,7 +151,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         // add user to chat fragment
-        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
+        /*final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
                 .child(fuser.getUid())
                 .child(userid);
 
@@ -168,7 +167,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
     private void readMesagges(final String myid, final String userid, final String imageurl){
