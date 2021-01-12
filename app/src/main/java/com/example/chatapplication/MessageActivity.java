@@ -91,9 +91,10 @@ public class MessageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId())
         {
-            case R.id.nav_home:
-                Intent intent = new Intent(MessageActivity.this,ThemeActivity.class);
+            case R.id.nav_profile:
+                Intent intent = new Intent(MessageActivity.this,UserProfileActivity.class);
                 startActivity(intent);
+                break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(MessageActivity.this,LoginActivity.class));
@@ -109,20 +110,7 @@ public class MessageActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
-/*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
 
-            case  R.id.logout:
-                FirebaseAuth.getInstance().signOut();
-                // change this code beacuse your app will crash
-                startActivity(new Intent(MainActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                return true;
-        }
-
-        return false;
-    }*/
     private void status(String status){
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
