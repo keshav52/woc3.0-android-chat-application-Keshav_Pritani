@@ -6,9 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.chatapplication.MessageActivityUI.ChatFragment;
-import com.example.chatapplication.MessageActivityUI.UserFragment;
 import com.example.chatapplication.MessageActivityUI.FavouriteFragment;
 import com.example.chatapplication.MessageActivityUI.OnlineUserFragment;
+import com.example.chatapplication.MessageActivityUI.UserFragment;
 
 public class MessageActivityAdapter extends FragmentStatePagerAdapter {
     public static final int count = 4;

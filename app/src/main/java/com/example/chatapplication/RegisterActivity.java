@@ -146,12 +146,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                         HashMap<String, String> hashMap = new HashMap<>();
                         hashMap.put("id", userid);
-                        hashMap.put("username", name.getText().toString());
+                        hashMap.put("name", name.getText().toString());
                         hashMap.put("phoneNo", phoneNo.getText().toString());
                         hashMap.put("imageURL", "default");
                         hashMap.put("status", status.getText().toString());
-                        hashMap.put("active", "false");
-
+                        hashMap.put("lastSeen", "");
                         reference.setValue(hashMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
                                 Intent intent = new Intent(RegisterActivity.this, MessageActivity.class);

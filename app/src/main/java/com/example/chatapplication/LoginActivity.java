@@ -64,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         phoneNumber = findViewById(R.id.phoneTextBox);
         pinView = findViewById(R.id.pinView);
         textU = findViewById(R.id.textView_noti);
@@ -97,12 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                 codeBySystem = verificationId;
             }
         };
-        /*btn_signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });*/
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {

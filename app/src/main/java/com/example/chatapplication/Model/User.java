@@ -4,10 +4,10 @@ public class User {
 
     private String phoneNo;
     private String id;
-    private String username;
+    private String name;
     private String imageURL;
     private String status;
-    private String active;
+    private String lastSeen;
 
 
     public String getId() {
@@ -18,12 +18,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String name) {
-        this.username = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPhoneNo() {
@@ -42,12 +42,12 @@ public class User {
         this.imageURL = imageURL;
     }
 
-    public String getActive() {
-        return active;
+    public String getLastSeen() {
+        return lastSeen;
     }
 
-    public void setActive(String active) {
-        this.active = active;
+    public void setLastSeen(String lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
     public String getStatus() {

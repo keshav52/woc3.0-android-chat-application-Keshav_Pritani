@@ -18,15 +18,15 @@
         tools:ignore="VectorDrawableCompat" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
+        android:id="@+id/onlineSymbol"
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_marginLeft="8dp"
         app:cardBackgroundColor="#91E192"
         app:cardCornerRadius="100dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView6"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="@+id/textView6" />
+        app:layout_constraintBottom_toBottomOf="@+id/activeTextView"
+        app:layout_constraintStart_toEndOf="@+id/activeTextView"
+        app:layout_constraintTop_toTopOf="@+id/activeTextView" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView1"
@@ -64,224 +64,16 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView1" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/activeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/autour_one"
         android:text="Online"
         android:textColor="@color/textAlt"
         app:layout_constraintEnd_toEndOf="@+id/username_chat"
         app:layout_constraintStart_toStartOf="@+id/username_chat"
         app:layout_constraintTop_toBottomOf="@+id/username_chat" />
-    <!--<RelativeLayout
-
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content">
-
-    </RelativeLayout>-->
-
-
-    <!--<LinearLayout
-
-        android:layout_width="410dp"
-
-        android:layout_height="573dp"
-
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6">
-
-        <RelativeLayout
-
-            android:id="@+id/container"
-
-            android:layout_width="match_parent"
-
-            android:layout_height="614dp"
-
-            android:orientation="vertical"
-
-            android:padding="20dp">
-
-            &lt;!&ndash;<ListView
-
-                android:id="@+id/messagesContainer"
-
-                android:layout_width="match_parent"
-
-                android:layout_height="match_parent"
-
-                android:layout_above="@id/meLbl"
-
-                android:layout_alignParentLeft="false"
-
-                android:layout_marginBottom="20dp"
-
-                android:divider="@null"
-
-                android:listSelector="@android:color/transparent"
-
-                android:transcriptMode="alwaysScroll">
-
-                <LinearLayout
-
-                    android:id="@+id/content1"
-
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView6">
-
-                    <TextView
-
-                        android:id="@+id/txtInfo1"
-
-                        android:layout_width="wrap_content"
-
-                        android:layout_height="wrap_content"
-
-                        android:layout_gravity="right"
-
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="12sp" />
-
-                    <LinearLayout
-
-                        android:id="@+id/contentWithBackground1"
-
-                        android:layout_width="wrap_content"
-
-                        android:layout_height="wrap_content"
-
-                        android:layout_gravity="right"
-
-                        android:background="@drawable/in_message_bg"
-
-                        android:orientation="vertical"
-
-                        android:paddingLeft="10dp"
-
-                        android:paddingBottom="10dp">
-
-                        <TextView
-
-                            android:id="@+id/txtMessage1"
-
-                            android:layout_width="wrap_content"
-
-                            android:layout_height="wrap_content"
-
-                            android:maxWidth="240dp"
-
-                            android:textColor="@android:color/black"
-                            android:textSize="18sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-            </ListView>&ndash;&gt;
-
-            <TextView
-
-                android:id="@+id/meLbl"
-
-                android:layout_width="wrap_content"
-
-                android:layout_height="wrap_content"
-
-                android:layout_gravity="left|center_vertical"
-
-                android:singleLine="false"
-
-                android:text="MySelf"
-
-                android:textSize="20dp" />
-
-            <TextView
-
-                android:id="@+id/friendLabel"
-
-                android:layout_width="wrap_content"
-
-                android:layout_height="wrap_content"
-
-                android:layout_alignParentRight="true"
-
-                android:text="Friend"
-
-                android:textSize="20dp" />
-
-            <LinearLayout
-
-                android:id="@+id/content"
-
-                android:layout_width="0dp"
-
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="76dp"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent">
-                &lt;!&ndash;                app:layout_constraintTop_toBottomOf="@+id/textView6"&ndash;&gt;
-
-
-                <TextView
-
-                    android:id="@+id/txtInfo"
-
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-
-                    android:layout_gravity="right"
-
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12sp" />
-
-                <LinearLayout
-
-                    android:id="@+id/contentWithBackground"
-
-                    android:layout_width="wrap_content"
-
-                    android:layout_height="wrap_content"
-
-                    android:layout_gravity="right"
-
-                    android:background="@drawable/out_message_bg"
-
-                    android:orientation="vertical"
-
-                    android:paddingLeft="10dp"
-
-                    android:paddingBottom="10dp">
-
-                    <TextView
-
-                        android:id="@+id/txtMessage"
-
-                        android:layout_width="wrap_content"
-
-                        android:layout_height="wrap_content"
-
-                        android:maxWidth="240dp"
-
-                        android:text=""
-                        android:textColor="@android:color/black"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </RelativeLayout>
-    </LinearLayout>-->
-
 
     <EditText
         android:id="@+id/messageBox"
@@ -318,15 +110,24 @@
 
     </androidx.cardview.widget.CardView>
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activeTextView" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/messageBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/view" />
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -334,9 +135,9 @@
         android:background="@color/colorAccent"
         android:elevation="10dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/messageBox"
+        app:layout_constraintBottom_toBottomOf="@+id/activeTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/recycler_view"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,56 +3,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="Home" />
+            android:title="Home"
+            android:icon="@drawable/ic_baseline_smartphone_24"/>
 
         <item
             android:id="@+id/nav_cycle"
-            android:title="Cycling" />
+            android:title="Cycling"
+            android:icon="@drawable/ic_baseline_smartphone_24" />
 
         <item
             android:id="@+id/nav_bus"
-            android:title="Bus" />
+            android:title="Bus"
+            android:icon="@drawable/ic_baseline_smartphone_24"/>
 
         <item
             android:id="@+id/nav_plane"
-            android:title="Plane" />
-    </group>
+            android:title="Plane"
+            android:icon="@drawable/ic_baseline_smartphone_24" />
 
     <item android:title="Profile">
 
         <menu>
 
-            <group android:checkableBehavior="single">
-
-                <item
-                    android:id="@+id/nav_login"
-                    android:title="Login" />
-
                 <item
                     android:id="@+id/nav_profile"
-                    android:title="Profile" />
+                    android:title="Profile"
+                    android:icon="@drawable/ic_baseline_smartphone_24"/>
 
                 <item
                     android:id="@+id/nav_logout"
-                    android:title="Logout" />
-            </group>
+                    android:title="Logout"
+                    android:icon="@drawable/ic_baseline_smartphone_24" />
         </menu>
     </item>
 
-    <item android:title="Communicate">
+    <!--<item android:title="Communicate">
 
         <menu>
 
             <item
                 android:id="@+id/nav_share"
-                android:title="Share" />
+                android:title="Share"
+                android:icon="@drawable/ic_baseline_smartphone_24" />
 
             <item
                 android:id="@+id/nav_rate"
-                android:title="Rate Us" />
+                android:title="Rate Us"
+                android:icon="@drawable/ic_baseline_smartphone_24"/>
         </menu>
-    </item>
+    </item>-->
 </menu>

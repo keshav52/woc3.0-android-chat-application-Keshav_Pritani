@@ -1,15 +1,11 @@
 package com.example.chatapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +27,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,11 +72,31 @@ public class ChatActivity extends AppCompatActivity {
 
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 assert user != null;
-                username.setText(user.getUsername());
+                username.setText(user.getName());
+                TextView online = findViewById(R.id.activeTextView);
+                if(!user.getLastSeen().equals(""))
+                {
+                    Date d = new Date(user.getLastSeen());
+                    Date current = new Date();
+                    DateFormat smf = SimpleDateFormat.getDateInstance();
+                    String lastSeen = smf.format(d);
+                    if(smf.format(d).equals(smf.format(current))) {
+                        smf = SimpleDateFormat.getTimeInstance();
+                        lastSeen = smf.format(d);
+                    }
+                    online.setText("Last Seen on " + lastSeen );
+                    findViewById(R.id.onlineSymbol).setVisibility(View.GONE);
+                }
+                else
+                {
+                    online.setText("Online");
+                    findViewById(R.id.onlineSymbol).setVisibility(View.VISIBLE);
+                }
                 if (user.getImageURL().equals("default")){
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 } else {
@@ -104,9 +123,6 @@ public class ChatActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        /*Log.i("Keshav", "keshav");
-        initControls();*/
     }
 
     public void sendBTNClicked(View view) {
@@ -186,7 +202,7 @@ public class ChatActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("active", status);
+        hashMap.put("lastSeen", status);
 
         reference.updateChildren(hashMap);
     }
@@ -200,7 +216,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        status("true");
+        status("");
         currentUser(userid);
     }
 
@@ -208,7 +224,11 @@ public class ChatActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 //        reference.removeEventListener(seenListener);
-        status("false");
+        status(new Date().toLocaleString());
         currentUser("none");
+    }
+
+    public void message(View view) {
+        this.finish();
     }
 }

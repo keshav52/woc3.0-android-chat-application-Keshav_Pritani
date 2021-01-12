@@ -1,4 +1,4 @@
-package com.example.chatapplication;
+package com.example.chatapplication.Model;
 
 public class ChatMessage {
     private long id;

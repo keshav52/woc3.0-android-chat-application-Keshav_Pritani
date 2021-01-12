@@ -3,18 +3,13 @@ package com.example.chatapplication;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
@@ -22,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.example.chatapplication.Adapter.MessageActivityAdapter;
 import com.example.chatapplication.Model.User;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,11 +25,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
+import java.util.Date;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MessageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MessageActivity extends AppCompatActivity {
 
 
     FirebaseUser firebaseUser;
@@ -45,7 +40,6 @@ public class MessageActivity extends AppCompatActivity implements NavigationView
     TextView username;
 
     DrawerLayout drawerLayout;
-    NavigationView navigationView;
     Toolbar toolbar;
 
     @Override
@@ -67,11 +61,12 @@ public class MessageActivity extends AppCompatActivity implements NavigationView
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
-        /*reference.addValueEventListener(new ValueEventListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                username.setText(user.getUsername());
+                assert user != null;
+                username.setText(user.getName());
                 if (user.getImageURL().equals("default")) {
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 } else {
@@ -85,63 +80,67 @@ public class MessageActivity extends AppCompatActivity implements NavigationView
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });*/
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        });
         toolbar = findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
-        toolbar.bringToFront();
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.nav_app_bar_open_drawer_description,R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_bus);
-
-//
-//        DrawerLayout mDrawerLayout = findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle mToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.nav_app_bar_open_drawer_description,R.string.navigation_drawer_close);
-//
-//        mDrawerLayout.addDrawerListener(mToggle);
-//        mToggle.syncState();
-
-    }
-
-    @SuppressLint("WrongConstant")
-    @Override
-    public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(Gravity.START))
-            drawerLayout.closeDrawer(Gravity.START);
-        else
-            super.onBackPressed();
-    }
-
-    public void chat(View view) {
-        Intent intent = new Intent(this, ChatActivity.class);
-        startActivity(intent);
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId())
         {
             case R.id.nav_home:
                 Intent intent = new Intent(MessageActivity.this,ThemeActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.nav_share:
-                Toast.makeText(this,"Keshav",Toast.LENGTH_LONG).show();
+            case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MessageActivity.this,LoginActivity.class));
+                finish();
                 break;
         }
         return true;
     }
 
-    public void clickMe(View view)
-    {
-        Toast.makeText(this,"keshav",Toast.LENGTH_LONG).show();
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+/*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+
+            case  R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                // change this code beacuse your app will crash
+                startActivity(new Intent(MainActivity.this, StartActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                return true;
+        }
+
+        return false;
+    }*/
+    private void status(String status){
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastSeen", status);
+
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status(new Date().toLocaleString());
     }
 }
