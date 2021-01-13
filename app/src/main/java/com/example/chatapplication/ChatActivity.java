@@ -2,7 +2,6 @@ package com.example.chatapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,25 +77,22 @@ public class ChatActivity extends AppCompatActivity {
                 assert user != null;
                 username.setText(user.getName());
                 TextView online = findViewById(R.id.activeTextView);
-                if(!user.getLastSeen().equals(""))
-                {
+                if (!user.getLastSeen().equals("")) {
                     Date d = new Date(user.getLastSeen());
                     Date current = new Date();
                     DateFormat smf = SimpleDateFormat.getDateInstance();
                     String lastSeen = smf.format(d);
-                    if(smf.format(d).equals(smf.format(current))) {
+                    if (smf.format(d).equals(smf.format(current))) {
                         smf = SimpleDateFormat.getTimeInstance();
                         lastSeen = smf.format(d);
                     }
-                    online.setText("Last Seen on " + lastSeen );
+                    online.setText("Last Seen on " + lastSeen);
                     findViewById(R.id.onlineSymbol).setVisibility(View.GONE);
-                }
-                else
-                {
+                } else {
                     online.setText("Online");
                     findViewById(R.id.onlineSymbol).setVisibility(View.VISIBLE);
                 }
-                if (user.getImageURL().equals("default")){
+                if (user.getImageURL().equals("default")) {
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 } else {
                     //and this
@@ -116,7 +111,6 @@ public class ChatActivity extends AppCompatActivity {
 
         text_send = findViewById(R.id.messageBox);
 
-
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -126,7 +120,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public void sendBTNClicked(View view) {
         String msg = text_send.getText().toString();
-        if (!msg.equals("")){
+        if (!msg.equals("")) {
             sendMessage(fuser.getUid(), userid, msg);
         } else {
             Toast.makeText(ChatActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
@@ -134,7 +128,7 @@ public class ChatActivity extends AppCompatActivity {
         text_send.setText("");
     }
 
-    private void sendMessage(String sender, final String receiver, String message){
+    private void sendMessage(String sender, final String receiver, String message) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
@@ -142,8 +136,7 @@ public class ChatActivity extends AppCompatActivity {
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
-        /*String timeStamp = new SimpleDateFormat("dd-yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-        hashMap.put("time", timeStamp);*/
+        hashMap.put("time",new Date());
 //        hashMap.put("isseen", false);
 
         reference.child("Chats").push().setValue(hashMap);
@@ -169,7 +162,7 @@ public class ChatActivity extends AppCompatActivity {
         });*/
     }
 
-    private void readMesagges(final String myid, final String userid, final String imageurl){
+    private void readMesagges(final String myid, final String userid, final String imageurl) {
         mchats = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -177,10 +170,10 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mchats.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
                     if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
-                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
                         mchats.add(chat);
                     }
 
@@ -196,7 +189,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void status(String status){
+    private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();

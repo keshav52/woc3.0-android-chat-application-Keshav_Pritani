@@ -1,10 +1,13 @@
 package com.example.chatapplication.Model;
 
+import java.util.Date;
+
 public class Chat {
 
     private String sender;
     private String receiver;
     private String message;
+    private Date time;
     private boolean isseen;
 
 
@@ -38,5 +41,13 @@ public class Chat {
 
     public void setIsseen(boolean isseen) {
         this.isseen = isseen;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 }

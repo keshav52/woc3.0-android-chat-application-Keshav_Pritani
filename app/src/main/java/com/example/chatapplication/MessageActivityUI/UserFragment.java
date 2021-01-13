@@ -32,7 +32,7 @@ public class UserFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private UserAdapter userAdapter;
-    private Set<User> mUsers;
+    private List<User> mUsers;
 
 //    EditText search_users;
     public static UserFragment getInstance() {
@@ -50,7 +50,7 @@ public class UserFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mUsers = new HashSet<>();
+        mUsers = new ArrayList<>();
 
         readUsers();
         return view;
@@ -76,7 +76,7 @@ public class UserFragment extends Fragment {
 
                     }
 
-                    userAdapter = new UserAdapter(getContext(), mUsers);
+                    userAdapter = new UserAdapter(getContext(), mUsers,true);
                     recyclerView.setAdapter(userAdapter);
 //                }
             }

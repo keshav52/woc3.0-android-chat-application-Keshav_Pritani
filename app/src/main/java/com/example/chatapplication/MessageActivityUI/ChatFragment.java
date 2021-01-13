@@ -24,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,9 +38,9 @@ public class ChatFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private UserAdapter userAdapter;
-    private Set<User> mUsers;
+    private List<User> mUsers;
 
-    private List<String> usersList;
+    private Set<String> usersList;
     FirebaseUser fuser;
     DatabaseReference reference;
     @Nullable
@@ -56,7 +55,7 @@ public class ChatFragment extends Fragment {
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
-        usersList = new ArrayList<>();
+        usersList = new HashSet<>();
 
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
@@ -107,7 +106,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void readChats() {
-        mUsers = new HashSet<>();
+        mUsers = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -129,7 +128,7 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 }
-                userAdapter = new UserAdapter(getContext(), mUsers);
+                userAdapter = new UserAdapter(getContext(), mUsers,false);
                 recyclerView.setAdapter(userAdapter);
             }
 

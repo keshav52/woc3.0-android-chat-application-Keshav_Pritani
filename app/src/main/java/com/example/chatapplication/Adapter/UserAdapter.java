@@ -13,24 +13,37 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapplication.ChatActivity;
+import com.example.chatapplication.Model.Chat;
 import com.example.chatapplication.Model.User;
 import com.example.chatapplication.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private final Context mContext;
     private final List<User> mUsers;
+    private boolean user = false;
 
+    String theLastMessage;
 
-    public UserAdapter(Context mContext, Set<User> mUsers) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean user) {
         this.mUsers = Collections.unmodifiableList(new ArrayList<>(mUsers));
         this.mContext = mContext;
+        this.user = user;
     }
 
     @NonNull
@@ -51,12 +64,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             } else {
                 Glide.with(mContext).load(user.getImageURL()).into(holder.profile_image);
             }
-
-        /*if (ischat){
-            lastMessage(user.getId(), holder.last_msg);
-        } else {
-            holder.last_msg.setVisibility(View.GONE);
-        }*/
+            if (!this.user)
+                lastMessage(user.getId(), holder.last_msg, holder.lastTime);
 
             holder.itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(mContext, ChatActivity.class);
@@ -75,53 +84,60 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         public TextView username;
         public ImageView profile_image;
-//        private TextView last_msg;
+        private TextView last_msg, lastTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             username = itemView.findViewById(R.id.username);
             profile_image = itemView.findViewById(R.id.profile_image);
-//            last_msg = itemView.findViewById(R.id.last_msg);
+            last_msg = itemView.findViewById(R.id.lastMessage);
+            lastTime = itemView.findViewById(R.id.lastTime);
         }
     }
 
     //check for last message
-    /*private void lastMessage(final String userid, final TextView last_msg){
+    private void lastMessage(final String userid, final TextView last_msg, TextView lastTime) {
         theLastMessage = "default";
+        final Date[] d = {new Date()};
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
                     if (firebaseUser != null && chat != null) {
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                                 chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
+                            d[0] = chat.getTime();
                         }
                     }
                 }
 
-                switch (theLastMessage){
-                    case  "default":
-                        last_msg.setText("No Message");
-                        break;
-
-                    default:
-                        last_msg.setText(theLastMessage);
-                        break;
+                if (theLastMessage != "default") {
+                    last_msg.setText(theLastMessage);
+                    if (d[0] != null) {
+                        Date current = new Date();
+                        DateFormat smf = SimpleDateFormat.getDateInstance();
+                        String last = smf.format(d[0]);
+                        if (smf.format(d[0]).equals(smf.format(current))) {
+                            smf = SimpleDateFormat.getTimeInstance();
+                            last = smf.format(d[0]);
+                        }
+                        lastTime.setText(last);
+                    }
+                    theLastMessage = "default";
                 }
-
-                theLastMessage = "default";
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
+
         });
-    }*/
+    }
 }
