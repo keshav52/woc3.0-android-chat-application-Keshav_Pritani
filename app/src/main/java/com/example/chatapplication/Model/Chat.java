@@ -7,15 +7,6 @@ public class Chat {
     private String message;
     private boolean isseen;
 
-    public Chat(String sender, String receiver, String message, boolean isseen) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.message = message;
-        this.isseen = isseen;
-    }
-
-    public Chat() {
-    }
 
     public String getSender() {
         return sender;

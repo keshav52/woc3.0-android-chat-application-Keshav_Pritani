@@ -136,6 +136,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     Toast.makeText(UserProfileActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
                 pd.dismiss();
+                Toast.makeText(this,"Uploaded",Toast.LENGTH_LONG).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(UserProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 pd.dismiss();
@@ -167,7 +168,13 @@ public class UserProfileActivity extends AppCompatActivity {
         hashMap.put("name", usernameEdit.getText().toString());
         hashMap.put("status", statusEdit.getText().toString());
         reference1.updateChildren(hashMap);
-        Toast.makeText(this,"Updated",Toast.LENGTH_LONG).show();
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("Updating");
+        pd.show();
+        new Handler().postDelayed((Runnable) () -> {
+            pd.dismiss();
+            Toast.makeText(this,"Updated",Toast.LENGTH_LONG).show();
+        },2000);
     }
 
     private void status(String status) {

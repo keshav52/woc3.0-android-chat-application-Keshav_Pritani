@@ -2,13 +2,16 @@ package com.example.chatapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -39,9 +42,12 @@ public class MessageActivity extends AppCompatActivity {
     CircleImageView profile_image;
     TextView username;
 
-    DrawerLayout drawerLayout;
     Toolbar toolbar;
 
+    SharedPreferences.Editor editor;
+    private SharedPreferences prefs;
+
+    @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,21 +90,36 @@ public class MessageActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        prefs = getSharedPreferences("PREFS", MODE_PRIVATE);
+        editor = prefs.edit();
     }
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.nav_profile:
-                Intent intent = new Intent(MessageActivity.this,UserProfileActivity.class);
+                Intent intent = new Intent(MessageActivity.this, UserProfileActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MessageActivity.this,LoginActivity.class));
+                startActivity(new Intent(MessageActivity.this, LoginActivity.class));
                 finish();
+                break;
+            case R.id.modeSwitch:
+                if (item.getTitle().equals("Switch to Light Theme")) {
+                    item.setTitle("Switch to Dark Theme");
+                    editor.putString("modeState", "light");
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                } else {
+                    item.setTitle("Switch to Light Theme");
+                    editor.putString("modeState", "dark");
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }
+                editor.apply();
+                startActivity(new Intent(this,MessageActivity.class));
+                this.finish();
                 break;
         }
         return true;
@@ -108,10 +129,22 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem item = menu.getItem(0);
+
+        if(prefs.getString("modeState", "dark").equals("dark"))
+        {
+            item.setTitle("Switch to Light Theme");
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+        else
+        {
+            item.setTitle("Switch to Dark Theme");
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
         return true;
     }
 
-    private void status(String status){
+    private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();

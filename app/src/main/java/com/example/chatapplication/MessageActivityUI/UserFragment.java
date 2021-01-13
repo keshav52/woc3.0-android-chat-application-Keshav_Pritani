@@ -23,14 +23,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
     private UserAdapter userAdapter;
-    private List<User> mUsers;
+    private Set<User> mUsers;
 
 //    EditText search_users;
     public static UserFragment getInstance() {
@@ -48,7 +50,7 @@ public class UserFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mUsers = new ArrayList<>();
+        mUsers = new HashSet<>();
 
         readUsers();
         return view;

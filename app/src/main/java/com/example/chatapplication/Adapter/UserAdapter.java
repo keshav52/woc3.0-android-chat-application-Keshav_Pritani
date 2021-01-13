@@ -16,17 +16,20 @@ import com.example.chatapplication.ChatActivity;
 import com.example.chatapplication.Model.User;
 import com.example.chatapplication.R;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
-    private Context mContext;
-    private List<User> mUsers;
+    private final Context mContext;
+    private final List<User> mUsers;
 
 
-    public UserAdapter(Context mContext, List<User> mUsers) {
-        this.mUsers = mUsers;
+    public UserAdapter(Context mContext, Set<User> mUsers) {
+        this.mUsers = Collections.unmodifiableList(new ArrayList<>(mUsers));
         this.mContext = mContext;
     }
 

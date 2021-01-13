@@ -114,7 +114,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-        CardView btn_send = findViewById(R.id.sendButton);
         text_send = findViewById(R.id.messageBox);
 
 
@@ -206,17 +205,17 @@ public class ChatActivity extends AppCompatActivity {
         reference.updateChildren(hashMap);
     }
 
-    private void currentUser(String userid){
+    /*private void currentUser(String userid){
         SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
         editor.putString("currentuser", userid);
         editor.apply();
-    }
+    }*/
 
     @Override
     protected void onResume() {
         super.onResume();
         status("");
-        currentUser(userid);
+//        currentUser(userid);
     }
 
     @Override
@@ -224,7 +223,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onPause();
 //        reference.removeEventListener(seenListener);
         status(new Date().toLocaleString());
-        currentUser("none");
+//        currentUser("none");
     }
 
     public void message(View view) {
