@@ -88,7 +88,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
-//            last_msg = itemView.findViewById(R.id.last_msg);
         }
 
     }
