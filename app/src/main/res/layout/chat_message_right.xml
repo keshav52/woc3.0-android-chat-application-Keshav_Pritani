@@ -30,13 +30,29 @@
             android:layout_alignParentRight="true" />
 
         <TextView
+            android:id="@+id/seenStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_seen"
-            android:layout_below="@id/show_message"
+            android:layout_below="@+id/show_message"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:text="Delivered"
+            android:textSize="11sp" />
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/seenStatus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/seenStatusText"
+            android:layout_marginTop="-2dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_toStartOf="@+id/seenStatusText"
+            android:layout_toLeftOf="@+id/seenStatusText"
+            android:src="@drawable/ic_delivered" />
     </RelativeLayout>
 
 </RelativeLayout>

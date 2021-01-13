@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -36,9 +37,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private final Context mContext;
     private final List<User> mUsers;
-    private boolean user = false;
-
     String theLastMessage;
+    private boolean user = false;
 
     public UserAdapter(Context mContext, List<User> mUsers, boolean user) {
         this.mUsers = Collections.unmodifiableList(new ArrayList<>(mUsers));
@@ -66,6 +66,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             }
             if (!this.user)
                 lastMessage(user.getId(), holder.last_msg, holder.lastTime);
+            if (user.getLastSeen().equals(""))
+                holder.onlineSymbol.setVisibility(View.VISIBLE);
+            else
+                holder.onlineSymbol.setVisibility(View.INVISIBLE);
 
             holder.itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(mContext, ChatActivity.class);
@@ -78,22 +82,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mUsers.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView username;
-        public ImageView profile_image;
-        private TextView last_msg, lastTime;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            username = itemView.findViewById(R.id.username);
-            profile_image = itemView.findViewById(R.id.profile_image);
-            last_msg = itemView.findViewById(R.id.lastMessage);
-            lastTime = itemView.findViewById(R.id.lastTime);
-        }
     }
 
     //check for last message
@@ -139,5 +127,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             }
 
         });
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private final CardView onlineSymbol;
+        public TextView username;
+        public ImageView profile_image;
+        private final TextView last_msg;
+        private final TextView lastTime;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            username = itemView.findViewById(R.id.username);
+            profile_image = itemView.findViewById(R.id.profile_image);
+            last_msg = itemView.findViewById(R.id.lastMessage);
+            lastTime = itemView.findViewById(R.id.lastTime);
+            onlineSymbol = itemView.findViewById(R.id.onlineSymbol);
+        }
     }
 }
