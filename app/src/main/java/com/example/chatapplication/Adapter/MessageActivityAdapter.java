@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.example.chatapplication.MessageActivityUI.ChatFragment;
-import com.example.chatapplication.MessageActivityUI.FavouriteFragment;
-import com.example.chatapplication.MessageActivityUI.OnlineUserFragment;
+import com.example.chatapplication.MessageActivityUI.FindUserFragment;
+import com.example.chatapplication.MessageActivityUI.GroupsFragment;
 import com.example.chatapplication.MessageActivityUI.UserFragment;
 
 public class MessageActivityAdapter extends FragmentStatePagerAdapter {
@@ -26,9 +26,9 @@ public class MessageActivityAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return UserFragment.getInstance();
             case 2:
-                return FavouriteFragment.getInstance();
+                return GroupsFragment.getInstance();
             case 3:
-                return OnlineUserFragment.getInstance();
+                return FindUserFragment.getInstance();
         }
         return null;
     }

@@ -1,6 +1,8 @@
 package com.example.chatapplication.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,24 +54,60 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat chat = mChats.get(position);
 
-        holder.show_message.setText(chat.getMessage());
+        String type = chat.getType();
+        if (type.equals("text")) {
+            holder.imageView.setVisibility(View.GONE);
+            holder.imageSeenStatus.setVisibility(View.GONE);
+            holder.imageSeenStatusText.setVisibility(View.GONE);
+            holder.show_message.setText(chat.getMessage());
+        } else {
+            holder.show_message.setVisibility(View.GONE);
+            holder.seenStatus.setVisibility(View.GONE);
+            holder.seenStatusText.setVisibility(View.GONE);
+            holder.imageView.setVisibility(View.VISIBLE);
+            if (type.equals("image")) {
+                Glide.with(mContext).load(chat.getMessage()).into(holder.imageView);
+            } else
+                holder.imageView.setImageResource(R.mipmap.ic_launcher);
 
+            holder.imageView.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(chat.getMessage()));
+                holder.imageView.getContext().startActivity(intent);
+            });
+        }
         if (imageUrl.equals("default")) {
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
         } else {
             Glide.with(mContext).load(imageUrl).into(holder.profile_image);
         }
-        if (position == mChats.size() - 1) {
-            if (chat.isIsseen()) {
-                holder.seenStatus.setImageResource(R.drawable.ic_seen);
-                holder.seenStatusText.setText("Seen");
+        if (position == mChats.size() - 1 && viewType != MSG_TYPE_LEFT) {
+            if (type.equals("text")) {
+                holder.seenStatus.setVisibility(View.VISIBLE);
+                holder.seenStatusText.setVisibility(View.VISIBLE);
             } else {
+                holder.imageSeenStatus.setVisibility(View.VISIBLE);
+                holder.imageSeenStatusText.setVisibility(View.VISIBLE);
+            }
+            if (chat.isIsseen()) {
+                if (type.equals("text")) {
+                    holder.seenStatus.setImageResource(R.drawable.ic_seen);
+                    holder.seenStatusText.setText("Seen");
+                } else {
+                    holder.imageSeenStatus.setImageResource(R.drawable.ic_seen);
+                    holder.imageSeenStatusText.setText("Seen");
+                }
+            } else if (type.equals("text")) {
                 holder.seenStatus.setImageResource(R.drawable.ic_delivered);
                 holder.seenStatusText.setText("Delivered");
+            } else {
+                holder.imageSeenStatus.setImageResource(R.drawable.ic_delivered);
+                holder.imageSeenStatusText.setText("Delivered");
             }
         } else {
             holder.seenStatus.setVisibility(View.GONE);
             holder.seenStatusText.setVisibility(View.GONE);
+            holder.imageSeenStatus.setVisibility(View.GONE);
+            holder.imageSeenStatusText.setVisibility(View.GONE);
         }
 
     }
@@ -92,9 +130,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView show_message, seenStatusText;
-        public ImageView profile_image;
-        public ImageView seenStatus;
+        public TextView show_message, seenStatusText, imageSeenStatusText;
+        public ImageView profile_image, seenStatus, imageView, imageSeenStatus;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -103,6 +140,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             profile_image = itemView.findViewById(R.id.profile_image);
             seenStatusText = itemView.findViewById(R.id.seenStatusText);
             seenStatus = itemView.findViewById(R.id.seenStatus);
+            imageView = itemView.findViewById(R.id.imageView);
+            imageSeenStatusText = itemView.findViewById(R.id.imageSeenStatusText);
+            imageSeenStatus = itemView.findViewById(R.id.imageSeenStatus);
         }
 
     }

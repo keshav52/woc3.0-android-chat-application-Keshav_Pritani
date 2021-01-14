@@ -1,15 +1,23 @@
 package com.example.chatapplication;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,13 +40,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -47,25 +61,22 @@ import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private final int IMAGE_REQUEST = 101, PDF_REQUEST = 102, WORD_REQUEST = 103;
     CircleImageView profile_image;
     TextView username;
-
     FirebaseUser fuser;
     DatabaseReference reference;
-
     Intent intent;
     String userid;
     EditText text_send;
     RecyclerView recyclerView;
-
     ChatAdapter messageAdapter;
     List<Chat> mchats;
-
     APIService apiService;
-
     boolean notify = false;
-
     ValueEventListener seenListener;
+    private Uri imageUri;
+    private StorageTask<UploadTask.TaskSnapshot> uploadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +146,7 @@ public class ChatActivity extends AppCompatActivity {
         notify = true;
         String msg = text_send.getText().toString();
         if (!msg.equals("")) {
-            sendMessage(fuser.getUid(), userid, msg);
+            sendMessage(fuser.getUid(), userid, msg, "text");
         } else {
             Toast.makeText(ChatActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
         }
@@ -164,13 +175,14 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessage(String sender, final String receiver, String message) {
+    private void sendMessage(String sender, final String receiver, String message, String type) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
+        hashMap.put("type", type);
         hashMap.put("message", message);
         hashMap.put("time", new Date());
         hashMap.put("isseen", false);
@@ -295,5 +307,118 @@ public class ChatActivity extends AppCompatActivity {
 
     public void message(View view) {
         this.finish();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (uploadTask != null && uploadTask.isInProgress()) {
+            Toast.makeText(this, "Upload in preogress", Toast.LENGTH_SHORT).show();
+        } else if (data != null && data.getData() != null && resultCode == RESULT_OK) {
+            imageUri = data.getData();
+            String type;
+            switch (requestCode ) {
+                case IMAGE_REQUEST:
+                    type = "image";
+                    break;
+                case PDF_REQUEST:
+                    type = "pdf";
+                    break;
+                case WORD_REQUEST:
+                    type = "word";
+                    break;
+                default:
+                    type = "any";
+            }
+            uploadFile(type);
+        }
+    }
+
+    public void addFiles(View view) {
+        ImageButton btn = findViewById(R.id.addFileImageView);
+        CharSequence[] type = new CharSequence[]{
+                "Images", "PDFs", "MS Word Files", "Any Other Type"
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select the type of File you want to Upload:");
+
+        builder.setItems(type, (dialog, which) -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            if (which == 0) {
+                intent.setType("image/*");
+                startActivityForResult(intent, IMAGE_REQUEST);
+            }
+            else if (which == 1) {
+                intent.setType("application/pdf");
+                startActivityForResult(intent, PDF_REQUEST);
+            }
+            else if (which == 2) {
+                intent.setType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                startActivityForResult(intent, WORD_REQUEST);
+            }
+            else if(which == 3)
+            {
+                intent.setType("*/*");
+                startActivityForResult(intent, 0);
+            }
+        });
+        builder.show();
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver contentResolver = this.getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    private String queryName(ContentResolver resolver, Uri uri) {
+        Cursor returnCursor =
+                resolver.query(uri, null, null, null, null);
+        assert returnCursor != null;
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        returnCursor.moveToFirst();
+        String name = returnCursor.getString(nameIndex);
+        returnCursor.close();
+        return name;
+    }
+
+    private void uploadFile(String type) {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("Uploading");
+        pd.show();
+
+        if (imageUri != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("sendUploads");
+            final StorageReference fileReference = storageReference.child(queryName(this.getContentResolver(),imageUri) + "." + getFileExtension(imageUri));
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw Objects.requireNonNull(task.getException());
+                }
+
+                return fileReference.getDownloadUrl();
+            }).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    assert downloadUri != null;
+                    String mUri = downloadUri.toString();
+
+                    sendMessage(fuser.getUid(), userid, mUri, type);
+
+                } else {
+                    Toast.makeText(ChatActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                }
+                pd.dismiss();
+//                Toast.makeText(this, "Sent", Toast.LENGTH_LONG).show();
+            }).addOnFailureListener(e -> {
+                Toast.makeText(ChatActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                pd.dismiss();
+            });
+        } else {
+            Toast.makeText(this, "No File selected", Toast.LENGTH_SHORT).show();
+        }
     }
 }

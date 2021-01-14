@@ -75,10 +75,23 @@
         app:layout_constraintStart_toStartOf="@+id/username_chat"
         app:layout_constraintTop_toBottomOf="@+id/username_chat" />
 
+    <ImageButton
+        android:id="@+id/addFileImageView"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:onClick="addFiles"
+        android:scaleType="centerCrop"
+        android:src="@drawable/add_file"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <EditText
         android:id="@+id/messageBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
@@ -87,7 +100,7 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/addFileImageView" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/sendButton"

@@ -52,7 +52,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-        final NavigationTabStrip navigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts1);
+        final NavigationTabStrip navigationTabStrip = findViewById(R.id.nts1);
         navigationTabStrip.setTabIndex(0, true);
         ViewPager mViewPager = findViewById(R.id.viewPage);
         MessageActivityAdapter adapterPager = new MessageActivityAdapter(getSupportFragmentManager());

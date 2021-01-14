@@ -2,8 +2,8 @@
 <resources>
     <string-array name="titles">titles
         <item>Chats</item>
-        <item>Users</item>
-        <item>Favorite</item>
-        <item>Online Users</item>
+        <item>Groups</item>
+        <item>Friends</item>
+        <item>Find Users</item>
     </string-array>
 </resources>

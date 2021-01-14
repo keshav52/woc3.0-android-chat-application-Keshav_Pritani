@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chatapplication.R;
 
-public class FavouriteFragment extends Fragment {
+public class FindUserFragment extends Fragment {
 
-    public static FavouriteFragment getInstance() {
-        return new FavouriteFragment();
+    public static FindUserFragment getInstance() {
+        return new FindUserFragment();
     }
 
     @Nullable
@@ -22,6 +22,6 @@ public class FavouriteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_favourite, container, false);
+        return inflater.inflate(R.layout.fragment_find_user, container, false);
     }
 }

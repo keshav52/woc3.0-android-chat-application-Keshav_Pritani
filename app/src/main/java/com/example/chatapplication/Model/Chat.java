@@ -9,7 +9,15 @@ public class Chat {
     private String message;
     private Date time;
     private boolean isseen;
+    private String type;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getSender() {
         return sender;
