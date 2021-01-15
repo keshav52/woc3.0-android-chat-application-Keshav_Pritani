@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.util.TimeUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -35,9 +33,6 @@ import com.google.firebase.storage.UploadTask;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -60,7 +55,7 @@ public class UserProfileActivity extends AppCompatActivity {
         TextView status = findViewById(R.id.statusTextView);
         usernameEdit = findViewById(R.id.usernameEditText);
         statusEdit = findViewById(R.id.statusEditText);
-        Button profile_imageButton = findViewById(R.id.profile_imageChangeButton);
+        Button profile_imageButton = findViewById(R.id.sendRequest);
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         assert fuser != null;
@@ -75,9 +70,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 status.setText(user.getStatus());
                 usernameEdit.setText(user.getName());
                 statusEdit.setText(user.getStatus());
-                if (user.getImageURL().equals("default")) {
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
-                } else {
+                if (!user.getImageURL().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
             }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".UserProfileActivity">
+    tools:context=".ShowProfileActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -56,52 +56,13 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/full_name_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Full Name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/usernameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="10dp"
-                android:importantForAutofill="no" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/status_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Status">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/statusEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:drawablePadding="10dp"
-                android:importantForAutofill="no" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
         <Button
             android:id="@+id/sendRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="CHANGE PROFILE PHOTO"
+            android:text="Send Request"
             app:backgroundTint="#FFC107" />
 
-        <Button
-            android:id="@+id/cancel_request"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="UPDATE"
-            app:backgroundTint="#FFC107"
-            android:onClick="updateDetails"/>
     </LinearLayout>
 </LinearLayout>

@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chatapplication.R;
 
-public class FindUserFragment extends Fragment {
+public class RequestsFragment extends Fragment {
 
-    public static FindUserFragment getInstance() {
-        return new FindUserFragment();
+    public static RequestsFragment getInstance() {
+        return new RequestsFragment();
     }
 
     @Nullable
@@ -22,6 +22,6 @@ public class FindUserFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_find_user, container, false);
+        return inflater.inflate(R.layout.fragment_requests, container, false);
     }
 }

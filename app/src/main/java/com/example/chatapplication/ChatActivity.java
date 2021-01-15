@@ -114,9 +114,7 @@ public class ChatActivity extends AppCompatActivity {
                     online.setText("Online");
                     findViewById(R.id.onlineSymbol).setVisibility(View.VISIBLE);
                 }
-                if (user.getImageURL().equals("default")) {
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
-                } else {
+                if (!user.getImageURL().equals("default")) {
                     //and this
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }

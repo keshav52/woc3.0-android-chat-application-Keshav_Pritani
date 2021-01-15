@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_baseline_emoji_emotions_24"
+            app:srcCompat="@drawable/ic_baseline_person_241"
             tools:ignore="VectorDrawableCompat" />
     </androidx.cardview.widget.CardView>
 

@@ -75,9 +75,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.imageView.getContext().startActivity(intent);
             });
         }
-        if (imageUrl.equals("default")) {
-            holder.profile_image.setImageResource(R.mipmap.ic_launcher);
-        } else {
+        if (!imageUrl.equals("default")) {
             Glide.with(mContext).load(imageUrl).into(holder.profile_image);
         }
         if (position == mChats.size() - 1 && viewType != MSG_TYPE_LEFT) {

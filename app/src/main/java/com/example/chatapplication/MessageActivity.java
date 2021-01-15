@@ -6,14 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
@@ -53,12 +51,12 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         final NavigationTabStrip navigationTabStrip = findViewById(R.id.nts1);
-        navigationTabStrip.setTabIndex(0, true);
+//        navigationTabStrip.setTabIndex(0, true);
         ViewPager mViewPager = findViewById(R.id.viewPage);
         MessageActivityAdapter adapterPager = new MessageActivityAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapterPager);
         navigationTabStrip.setViewPager(mViewPager);
-        navigationTabStrip.setTabIndex(0, true);
+//        navigationTabStrip.setTabIndex(0, true);
 
 
         profile_image = findViewById(R.id.profile_image);
@@ -73,11 +71,7 @@ public class MessageActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 assert user != null;
                 username.setText(user.getName());
-                if (user.getImageURL().equals("default")) {
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
-                } else {
-
-                    //change this
+                if (!user.getImageURL().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
             }
@@ -118,8 +112,11 @@ public class MessageActivity extends AppCompatActivity {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 }
                 editor.apply();
-                startActivity(new Intent(this,MessageActivity.class));
-                this.finish();
+//                startActivity(new Intent(this,MessageActivity.class));
+//                this.finish();
+                break;
+            case R.id.findUser:
+                startActivity(new Intent(this,FindUserActivity.class));
                 break;
         }
         return true;
