@@ -190,4 +190,8 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onPause();
         status(new Date().toLocaleString());
     }
+
+    public void backToHome(View view) {
+        this.finish();
+    }
 }

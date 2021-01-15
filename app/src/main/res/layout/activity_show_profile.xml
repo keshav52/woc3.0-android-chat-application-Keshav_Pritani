@@ -14,6 +14,20 @@
         android:elevation="6dp"
         android:padding="20dp">
 
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:onClick="backToAllUsers"
+            android:background="?selectableItemBackground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+            tools:ignore="VectorDrawableCompat" />
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
             android:layout_width="100dp"
@@ -63,6 +77,18 @@
             android:layout_marginTop="30dp"
             android:text="Send Request"
             app:backgroundTint="#FFC107" />
+
+        <TextView
+            android:id="@+id/requestStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center_horizontal"
+            android:text="TextView"
+            android:textColor="@color/mainText"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
     </LinearLayout>
 </LinearLayout>
