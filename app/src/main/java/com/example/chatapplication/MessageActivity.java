@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,10 +37,6 @@ public class MessageActivity extends AppCompatActivity {
 
     FirebaseUser firebaseUser;
     DatabaseReference reference;
-
-    CircleImageView profile_image;
-    TextView username;
-
     Toolbar toolbar;
 
     SharedPreferences.Editor editor;
@@ -51,29 +48,23 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         final NavigationTabStrip navigationTabStrip = findViewById(R.id.nts1);
-//        navigationTabStrip.setTabIndex(0, true);
         ViewPager mViewPager = findViewById(R.id.viewPage);
         MessageActivityAdapter adapterPager = new MessageActivityAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapterPager);
         navigationTabStrip.setViewPager(mViewPager);
-//        navigationTabStrip.setTabIndex(0, true);
-
-
-        profile_image = findViewById(R.id.profile_image);
-        username = findViewById(R.id.username);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 assert user != null;
-                username.setText(user.getName());
-                if (!user.getImageURL().equals("default")) {
-                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
-                }
+                Objects.requireNonNull(getSupportActionBar()).setTitle(user.getName());
             }
 
             @Override
@@ -81,8 +72,6 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         prefs = getSharedPreferences("PREFS", MODE_PRIVATE);
         editor = prefs.edit();

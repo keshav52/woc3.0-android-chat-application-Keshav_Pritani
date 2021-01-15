@@ -23,9 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 public class UserFragment extends Fragment {
 
@@ -34,7 +33,6 @@ public class UserFragment extends Fragment {
     private UserAdapter userAdapter;
     private List<User> mUsers;
 
-//    EditText search_users;
     public static UserFragment getInstance() {
         return new UserFragment();
     }
@@ -59,26 +57,37 @@ public class UserFragment extends Fragment {
     private void readUsers() {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        assert firebaseUser != null;
+        DatabaseReference friendsReference = FirebaseDatabase.getInstance().getReference("FriendsLists").child(firebaseUser.getUid());
 
-        reference.addValueEventListener(new ValueEventListener() {
+        ArrayList<String> u = new ArrayList<>();
+        friendsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                /*if (search_users.getText().toString().equals("")) {*/
-                    mUsers.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-
-                        assert user!=null;
-                        assert firebaseUser!=null;
-                        if (!user.getId().equals(firebaseUser.getUid())) {
+                u.clear();
+                mUsers.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (Objects.requireNonNull(snapshot.child("status").getValue()).toString().equals("accepted")) {
+                        u.add(snapshot.getKey());
+                    }
+                }
+                for (String u1 : u) {
+                    reference.child(u1).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
+                            User user = dataSnapshot1.getValue(User.class);
                             mUsers.add(user);
+                            userAdapter = new UserAdapter(getContext(), mUsers, "user");
+                            recyclerView.setAdapter(userAdapter);
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    userAdapter = new UserAdapter(getContext(), mUsers,true);
-                    recyclerView.setAdapter(userAdapter);
-//                }
+                        }
+                    });
+                }
+
             }
 
             @Override

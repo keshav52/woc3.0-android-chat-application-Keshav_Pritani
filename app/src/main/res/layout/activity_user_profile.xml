@@ -19,7 +19,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_person_241" />
+            android:src="@drawable/ic_baseline_person_241"
+            tools:ignore="VectorDrawableCompat" />
 
         <TextView
             android:id="@+id/usernameTextView"
@@ -96,7 +97,7 @@
             app:backgroundTint="#FFC107" />
 
         <Button
-            android:id="@+id/cancel_request"
+            android:id="@+id/updateProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"

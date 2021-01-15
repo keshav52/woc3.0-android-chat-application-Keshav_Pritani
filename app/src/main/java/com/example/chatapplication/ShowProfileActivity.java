@@ -75,6 +75,16 @@ public class ShowProfileActivity extends AppCompatActivity {
                             status = "sent";
                             request.setText("Cancel Request");
                         }
+                        else if(Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("rejected")) {
+                            status = "rejected";
+                            request.setText("Your Request was Rejected.");
+                            request.setEnabled(false);
+                        }
+                        else if(Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("accepted")) {
+                            status = "accepted";
+                            request.setText("Your Request was Accepted.");
+                            request.setEnabled(false);
+                        }
                     }
                 }
 
@@ -89,8 +99,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                     sendRequest();
                 } else if (status.equals("sent")) {
                     cancelRequest();
-                } else
-                    request.setEnabled(true);
+                }
             });
         } else {
             request.setVisibility(View.INVISIBLE);

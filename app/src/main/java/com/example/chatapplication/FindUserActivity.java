@@ -39,6 +39,7 @@ public class FindUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_user);
+
         firebaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
@@ -50,8 +51,6 @@ public class FindUserActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Find Users");
-
-
     }
 
     @Override
@@ -94,9 +93,24 @@ public class FindUserActivity extends AppCompatActivity {
 
         adapter.startListening();
     }
+    public static class FindUserViewHolder extends RecyclerView.ViewHolder {
+        private final CardView onlineSymbol;
+        TextView userName, userStatus;
+        CircleImageView profileImage;
+
+
+        public FindUserViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            userName = itemView.findViewById(R.id.username);
+            userStatus = itemView.findViewById(R.id.lastMessage);
+            profileImage = itemView.findViewById(R.id.profile_image);
+            onlineSymbol = itemView.findViewById(R.id.onlineSymbol);
+            onlineSymbol.setVisibility(View.GONE);
+        }
+    }
 
     private void status(String status) {
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -117,20 +131,4 @@ public class FindUserActivity extends AppCompatActivity {
         status(new Date().toLocaleString());
     }
 
-    public static class FindUserViewHolder extends RecyclerView.ViewHolder {
-        private final CardView onlineSymbol;
-        TextView userName, userStatus;
-        CircleImageView profileImage;
-
-
-        public FindUserViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            userName = itemView.findViewById(R.id.username);
-            userStatus = itemView.findViewById(R.id.lastMessage);
-            profileImage = itemView.findViewById(R.id.profile_image);
-            onlineSymbol = itemView.findViewById(R.id.onlineSymbol);
-            onlineSymbol.setVisibility(View.GONE);
-        }
-    }
 }

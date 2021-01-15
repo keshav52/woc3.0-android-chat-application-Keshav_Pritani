@@ -2,11 +2,13 @@ package com.example.chatapplication.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -37,10 +39,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private final Context mContext;
     private final List<User> mUsers;
+    private final String user;
     String theLastMessage;
-    private boolean user = false;
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean user) {
+    public UserAdapter(Context mContext, List<User> mUsers, String user) {
         this.mUsers = Collections.unmodifiableList(new ArrayList<>(mUsers));
         this.mContext = mContext;
         this.user = user;
@@ -62,18 +64,38 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             if (!user.getImageURL().equals("default")) {
                 Glide.with(mContext).load(user.getImageURL()).into(holder.profile_image);
             }
-            if (!this.user)
-                lastMessage(user.getId(), holder.last_msg, holder.lastTime);
+            if (this.user.equals("chat"))
+                lastMessage(user.getId(), holder.last_msg, holder.lastTime, holder.username);
+            else if (this.user.equals("request")) {
+                holder.acceptRequest.setVisibility(View.VISIBLE);
+                holder.declineRequest.setVisibility(View.VISIBLE);
+                holder.acceptRequest.setOnClickListener(v -> {
+                    FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+                    assert fuser != null;
+                    String currentId = fuser.getUid();
+                    DatabaseReference friendsListsRef = FirebaseDatabase.getInstance().getReference("FriendsLists");
+                    friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("accepted").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).child("status").setValue("accepted").addOnCompleteListener(task2 -> Toast.makeText(mContext, "Friend Added", Toast.LENGTH_SHORT).show()));
+                });
+                holder.declineRequest.setOnClickListener(v -> {
+                    FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+                    assert fuser != null;
+                    String currentId = fuser.getUid();
+                    DatabaseReference friendsListsRef = FirebaseDatabase.getInstance().getReference("FriendsLists");
+                    friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("rejected").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).removeValue().addOnCompleteListener(task1 -> Toast.makeText(mContext, "Request Cancelled", Toast.LENGTH_SHORT).show()));
+                });
+            }
             if (user.getLastSeen().equals(""))
                 holder.onlineSymbol.setVisibility(View.VISIBLE);
             else
                 holder.onlineSymbol.setVisibility(View.INVISIBLE);
 
-            holder.itemView.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("userid", user.getId());
-                mContext.startActivity(intent);
-            });
+            if (!this.user.equals("request")) {
+                holder.itemView.setOnClickListener(view -> {
+                    Intent intent = new Intent(mContext, ChatActivity.class);
+                    intent.putExtra("userid", user.getId());
+                    mContext.startActivity(intent);
+                });
+            }
         }
     }
 
@@ -83,12 +105,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     //check for last message
-    private void lastMessage(final String userid, final TextView last_msg, TextView lastTime) {
+    private void lastMessage(final String userid, final TextView last_msg, TextView lastTime, TextView username) {
         theLastMessage = "default";
         final Date[] d = {new Date()};
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
-
+        final boolean[] flag = {false};
+        final boolean[] seen = {false};
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -97,14 +120,35 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     if (firebaseUser != null && chat != null) {
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                                 chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
-                            theLastMessage = chat.getMessage();
+                            if (chat.getType().equals("text"))
+                                theLastMessage = chat.getMessage();
+                            else {
+                                theLastMessage = "";
+                                if (chat.getSender().equals(firebaseUser.getUid()))
+                                    theLastMessage += "You: ";
+                                theLastMessage += "Sent ";
+                                if (chat.getType().equals("image")) theLastMessage += "an ";
+                                else theLastMessage += "a ";
+                                theLastMessage += chat.getType();
+                                if (!chat.getType().equals("image")) theLastMessage += " document";
+                            }
                             d[0] = chat.getTime();
+                            if (chat.getReceiver().equals(firebaseUser.getUid())) {
+                                flag[0] = true;
+                                seen[0] = chat.isIsseen();
+                            } else flag[0] = false;
                         }
                     }
                 }
 
-                if (theLastMessage != "default") {
+                if (!theLastMessage.equals("default")) {
                     last_msg.setText(theLastMessage);
+                    if (flag[0] && !seen[0]) {
+                        last_msg.setTypeface(null, Typeface.BOLD);
+                        lastTime.setTypeface(null, Typeface.BOLD);
+                        username.setTypeface(null, Typeface.BOLD);
+                        last_msg.setTextSize(16);
+                    }
                     if (d[0] != null) {
                         Date current = new Date();
                         DateFormat smf = SimpleDateFormat.getDateInstance();
@@ -130,10 +174,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final CardView onlineSymbol;
-        public TextView username;
-        public ImageView profile_image;
         private final TextView last_msg;
         private final TextView lastTime;
+        public TextView username;
+        public ImageView profile_image, acceptRequest, declineRequest;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -143,6 +187,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             last_msg = itemView.findViewById(R.id.lastMessage);
             lastTime = itemView.findViewById(R.id.lastTime);
             onlineSymbol = itemView.findViewById(R.id.onlineSymbol);
+            acceptRequest = itemView.findViewById(R.id.acceptRequest);
+            declineRequest = itemView.findViewById(R.id.declineRequest);
         }
     }
 }

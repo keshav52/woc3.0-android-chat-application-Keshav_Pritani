@@ -13,7 +13,10 @@
         android:layout_height="50dp"
         android:src="@drawable/ic_baseline_person_241"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/mainText"
+        tools:ignore="VectorDrawableCompat" />
 
     <TextView
         android:id="@+id/username"
@@ -61,5 +64,29 @@
         app:cardCornerRadius="100dp"
         app:layout_constraintStart_toStartOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="@+id/profile_image" />
+
+    <ImageView
+        android:id="@+id/acceptRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:srcCompat="@drawable/ic_seen" />
+
+    <ImageView
+        android:id="@+id/declineRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/acceptRequest"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:srcCompat="@drawable/ic_decline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
