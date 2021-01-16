@@ -5,5 +5,4 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:titleTextColor="@color/mainText"
     app:title=" "
-    android:background="@color/mainBackground"
-    app:popupTheme="@style/MenuStyle"/>
+    android:background="@color/mainBackground"/>

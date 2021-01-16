@@ -1,5 +1,6 @@
 package com.example.chatapplication.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,8 +18,13 @@ import com.example.chatapplication.Model.Chat;
 import com.example.chatapplication.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
@@ -50,21 +56,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat chat = mChats.get(position);
-
         String type = chat.getType();
         if (type.equals("text")) {
             holder.imageView.setVisibility(View.GONE);
             holder.imageSeenStatus.setVisibility(View.GONE);
             holder.imageSeenStatusText.setVisibility(View.GONE);
             holder.show_message.setText(chat.getMessage());
+            holder.msgTime.setText(chat.getTime().getHours() + ":" + chat.getTime().getMinutes());
         } else {
             holder.show_message.setVisibility(View.GONE);
             holder.seenStatus.setVisibility(View.GONE);
             holder.seenStatusText.setVisibility(View.GONE);
             holder.imageView.setVisibility(View.VISIBLE);
+            holder.msgTime2.setVisibility(View.VISIBLE);
+            holder.msgTime.setVisibility(View.GONE);
+            holder.msgTime2.setText(chat.getTime().getHours() + ":" + chat.getTime().getMinutes());
             if (type.equals("image")) {
                 Glide.with(mContext).load(chat.getMessage()).into(holder.imageView);
             } else
@@ -75,10 +85,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 holder.imageView.getContext().startActivity(intent);
             });
         }
-        if (!imageUrl.equals("default")) {
-            Glide.with(mContext).load(imageUrl).into(holder.profile_image);
+        if (viewType == MSG_TYPE_LEFT) {
+            if (imageUrl.equals("group")) {
+                FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String img = Objects.requireNonNull(snapshot.child("imageURL").getValue()).toString();
+                        if(!img.equals("default"))
+                            Glide.with(mContext).load(img).into(holder.profile_image);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            } else if (!imageUrl.equals("default")) {
+                Glide.with(mContext).load(imageUrl).into(holder.profile_image);
+            }
         }
-        if (position == mChats.size() - 1 && viewType != MSG_TYPE_LEFT) {
+        if (!imageUrl.equals("group") && position == mChats.size() - 1 && viewType != MSG_TYPE_LEFT) {
             if (type.equals("text")) {
                 holder.seenStatus.setVisibility(View.VISIBLE);
                 holder.seenStatusText.setVisibility(View.VISIBLE);
@@ -128,13 +154,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView show_message, seenStatusText, imageSeenStatusText;
+        public TextView nameTextView, show_message, seenStatusText, imageSeenStatusText, msgTime, msgTime2;
         public ImageView profile_image, seenStatus, imageView, imageSeenStatus;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            nameTextView = itemView.findViewById(R.id.nameTextView);
             show_message = itemView.findViewById(R.id.show_message);
+            msgTime = itemView.findViewById(R.id.msg_time);
+            msgTime2 = itemView.findViewById(R.id.image_msg_time);
             profile_image = itemView.findViewById(R.id.profile_image);
             seenStatusText = itemView.findViewById(R.id.seenStatusText);
             seenStatus = itemView.findViewById(R.id.seenStatus);

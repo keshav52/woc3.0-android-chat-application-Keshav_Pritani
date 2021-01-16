@@ -61,7 +61,7 @@ import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private final int IMAGE_REQUEST = 101, PDF_REQUEST = 102, WORD_REQUEST = 103;
+    public static final int IMAGE_REQUEST = 101, PDF_REQUEST = 102, WORD_REQUEST = 103;
     CircleImageView profile_image;
     TextView username;
     FirebaseUser fuser;
@@ -115,7 +115,6 @@ public class ChatActivity extends AppCompatActivity {
                     findViewById(R.id.onlineSymbol).setVisibility(View.VISIBLE);
                 }
                 if (!user.getImageURL().equals("default")) {
-                    //and this
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
 

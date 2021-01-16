@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class GroupsFragment extends Fragment {
 
@@ -54,47 +52,20 @@ public class GroupsFragment extends Fragment {
 
     private void readGroups() {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("GroupsLists");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
                 assert firebaseUser != null;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    snapshot.child("participants").getRef().addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot1) {
-                            if(snapshot1.hasChild(firebaseUser.getUid())) {
-                                User user = snapshot.getValue(User.class);
-                                mUsers.add(user);
-                                UserAdapter userAdapter = new UserAdapter(getContext(), mUsers, "group");
-                                recyclerView.setAdapter(userAdapter);
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
+                    if (snapshot.child("participants").child(firebaseUser.getUid()).exists()) {
+                        User user = snapshot.getValue(User.class);
+                        mUsers.add(user);
+                    }
                 }
-                /*for (String u1 : u) {
-                    reference.child(u1).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
-                            User user = dataSnapshot1.getValue(User.class);
-                            mUsers.add(user);
-                            UserAdapter userAdapter = new UserAdapter(getContext(), mUsers, "group");
-                            recyclerView.setAdapter(userAdapter);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }*/
+                UserAdapter userAdapter = new UserAdapter(getContext(), mUsers, "group");
+                recyclerView.setAdapter(userAdapter);
             }
 
             @Override

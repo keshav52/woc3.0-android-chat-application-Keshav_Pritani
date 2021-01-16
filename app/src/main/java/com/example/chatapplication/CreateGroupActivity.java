@@ -135,7 +135,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         pd.show();
 
         String userid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("GroupsLists");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
 
         String d = new Date().toLocaleString();
         String key = reference.push().getKey();

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapplication.ChatActivity;
+import com.example.chatapplication.GroupChatActivity;
 import com.example.chatapplication.Model.Chat;
 import com.example.chatapplication.Model.User;
 import com.example.chatapplication.R;
@@ -58,46 +59,52 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         final User user = mUsers.get(position);
-        if (user != null) {
-            holder.username.setText(user.getName());
-            if (!user.getImageURL().equals("default")) {
-                Glide.with(mContext).load(user.getImageURL()).into(holder.profile_image);
-            }
-            if (this.user.equals("chat"))
-                lastMessage(user.getId(), holder.last_msg, holder.lastTime, holder.username);
-            else if (this.user.equals("request")) {
+        assert user != null;
+        holder.username.setText(user.getName());
+        if (!user.getImageURL().equals("default")) {
+            Glide.with(mContext).load(user.getImageURL()).into(holder.profile_image);
+        }
+        switch (this.user) {
+            case "chat":
+                lastChatMessage(user.getId(), holder.last_msg, holder.lastTime, holder.username);
+                break;
+            case "group":
+                lastGroupMessage(user.getId(), holder.last_msg, holder.lastTime);
+                break;
+            case "request":
                 holder.acceptRequest.setVisibility(View.VISIBLE);
                 holder.declineRequest.setVisibility(View.VISIBLE);
-                holder.acceptRequest.setOnClickListener(v -> {
-                    FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-                    assert fuser != null;
-                    String currentId = fuser.getUid();
-                    DatabaseReference friendsListsRef = FirebaseDatabase.getInstance().getReference("FriendsLists");
-                    friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("accepted").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).child("status").setValue("accepted").addOnCompleteListener(task2 -> Toast.makeText(mContext, "Friend Added", Toast.LENGTH_SHORT).show()));
-                });
-                holder.declineRequest.setOnClickListener(v -> {
-                    FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-                    assert fuser != null;
-                    String currentId = fuser.getUid();
-                    DatabaseReference friendsListsRef = FirebaseDatabase.getInstance().getReference("FriendsLists");
-                    friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("rejected").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).removeValue().addOnCompleteListener(task1 -> Toast.makeText(mContext, "Request Cancelled", Toast.LENGTH_SHORT).show()));
-                });
-            }
-            if (!this.user.equals("group") && user.getLastSeen().equals(""))
-                holder.onlineSymbol.setVisibility(View.VISIBLE);
-            else
-                holder.onlineSymbol.setVisibility(View.INVISIBLE);
-
-            if (!this.user.equals("request")) {
-                holder.itemView.setOnClickListener(view -> {
-                    Intent intent = new Intent(mContext, ChatActivity.class);
-                    intent.putExtra("userid", user.getId());
-                    mContext.startActivity(intent);
-                });
-            }
+                FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+                assert fuser != null;
+                String currentId = fuser.getUid();
+                DatabaseReference friendsListsRef = FirebaseDatabase.getInstance().getReference("FriendsLists");
+                holder.acceptRequest.setOnClickListener(v -> friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("accepted").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).child("status").setValue("accepted").addOnCompleteListener(task2 -> Toast.makeText(mContext, "Friend Added", Toast.LENGTH_LONG).show())));
+                holder.declineRequest.setOnClickListener(v -> friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("rejected").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).removeValue().addOnCompleteListener(task1 -> Toast.makeText(mContext, "Request Cancelled", Toast.LENGTH_LONG).show())));
+                break;
         }
+        if (!this.user.equals("group") && user.getLastSeen().equals(""))
+            holder.onlineSymbol.setVisibility(View.VISIBLE);
+        else
+            holder.onlineSymbol.setVisibility(View.INVISIBLE);
+
+        if (this.user.equals("chat") || this.user.equals("user")) {
+            holder.itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra("userid", user.getId());
+                mContext.startActivity(intent);
+            });
+        } else if (this.user.equals("group")) {
+            holder.itemView.setOnClickListener(view -> {
+                Intent intent = new Intent(mContext, GroupChatActivity.class);
+                intent.putExtra("groupid", user.getId());
+                mContext.startActivity(intent);
+            });
+        }
+    }
+
+    private void lastGroupMessage(String id, TextView last_msg, TextView lastTime) {
+
     }
 
     @Override
@@ -105,8 +112,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return mUsers.size();
     }
 
-    //check for last message
-    private void lastMessage(final String userid, final TextView last_msg, TextView lastTime, TextView username) {
+    private void lastChatMessage(final String userid, final TextView last_msg, TextView lastTime, TextView username) {
         theLastMessage = "default";
         final Date[] d = {new Date()};
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

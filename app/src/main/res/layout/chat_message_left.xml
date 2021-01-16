@@ -1,90 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="300dp"
-    android:padding="8dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?selectableItemBackground">
+    android:background="?selectableItemBackground"
+    android:padding="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:id="@+id/profile_image"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_launcher" />
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/profile_image"
         android:layout_toRightOf="@id/profile_image"
-        android:layout_marginLeft="5dp"
-        android:text="hello"
-        android:id="@+id/show_message"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:background="@drawable/background_left_message"
-        android:textColor="@color/mainText"/>
+        android:background="@drawable/bg_receiver">
 
-    <TextView
-        android:id="@+id/seenStatusText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/show_message"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:text="Delivered"
-        android:textSize="11sp"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
+            android:text="Name"
+            android:textColor="@color/mainText"
+            android:visibility="gone" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/seenStatus"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignTop="@+id/seenStatusText"
-        android:layout_marginTop="-2dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_toStartOf="@+id/seenStatusText"
-        android:layout_toLeftOf="@+id/seenStatusText"
-        android:src="@drawable/ic_delivered"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/show_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nameTextView"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2dp"
+            android:maxWidth="300dp"
+            android:paddingStart="14dp"
+            android:paddingLeft="14dp"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp"
+            android:text="Message"
+            android:textColor="@color/mainText"
+            android:textSize="18sp" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_toEndOf="@+id/profile_image"
-        android:layout_toRightOf="@+id/profile_image" /><TextView
-    android:id="@+id/imageSeenStatusText"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/imageView"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="4dp"
-    android:layout_marginRight="4dp"
-    android:text="Delivered"
-    android:textSize="11sp"
-    android:visibility="gone" />
+        <TextView
+            android:id="@+id/msg_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/show_message"
+            android:layout_alignEnd="@+id/show_message"
+            android:layout_alignRight="@+id/show_message"
+            android:layout_alignParentTop="false"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="right"
+            android:text="time"
+            android:textColor="@color/textAlt" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageSeenStatus"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignTop="@+id/imageSeenStatusText"
-        android:layout_marginTop="-2dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_toStartOf="@+id/imageSeenStatusText"
-        android:layout_toLeftOf="@+id/imageSeenStatusText"
-        android:src="@drawable/ic_delivered"
-        android:visibility="gone" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/image_msg_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_alignEnd="@+id/imageView"
+            android:layout_alignRight="@+id/imageView"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:gravity="right"
+            android:text="time"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/seenStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/show_message"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:text="Delivered"
+            android:textSize="11sp"
+            android:visibility="gone" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/seenStatus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/seenStatusText"
+            android:layout_marginTop="-2dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_toStartOf="@+id/seenStatusText"
+            android:layout_toLeftOf="@+id/seenStatusText"
+            android:src="@drawable/ic_delivered"
+            android:visibility="gone"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/imageSeenStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:text="Delivered"
+            android:textSize="11sp"
+            android:visibility="gone" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageSeenStatus"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/imageSeenStatusText"
+            android:layout_marginTop="-2dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_toStartOf="@+id/imageSeenStatusText"
+            android:layout_toLeftOf="@+id/imageSeenStatusText"
+            android:src="@drawable/ic_delivered"
+            android:visibility="gone"
+            tools:ignore="VectorDrawableCompat" />
+    </RelativeLayout>
 </RelativeLayout>
