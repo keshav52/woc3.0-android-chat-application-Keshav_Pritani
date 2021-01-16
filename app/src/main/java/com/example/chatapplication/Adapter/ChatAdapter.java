@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -87,12 +88,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }
         if (viewType == MSG_TYPE_LEFT) {
             if (imageUrl.equals("group")) {
+                holder.nameTextView.setVisibility(View.VISIBLE);
                 FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String img = Objects.requireNonNull(snapshot.child("imageURL").getValue()).toString();
-                        if(!img.equals("default"))
-                            Glide.with(mContext).load(img).into(holder.profile_image);
+                        if (!img.equals("default") && !img.isEmpty()) {
+                            try {
+                                Glide.with(mContext).load(img).into(holder.profile_image);
+                            } catch (Exception e) {
+                                Toast.makeText(mContext, "Error while Loading Profile picture", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        holder.nameTextView.setText(Objects.requireNonNull(snapshot.child("name").getValue()).toString());
                     }
 
                     @Override

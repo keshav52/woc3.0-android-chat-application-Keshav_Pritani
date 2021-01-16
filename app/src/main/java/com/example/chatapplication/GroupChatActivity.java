@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -45,14 +47,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.chatapplication.ChatActivity.PDF_REQUEST;
 import static com.example.chatapplication.ChatActivity.WORD_REQUEST;
+import static com.example.chatapplication.GroupAddParticipantsActivity.groupId1;
 import static com.example.chatapplication.UserProfileActivity.IMAGE_REQUEST;
 
 public class GroupChatActivity extends AppCompatActivity {
 
+    public static String groupId, myRole;
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
     private Uri imageUri;
     private EditText text_send;
-    private String groupId;
     private RecyclerView recyclerView;
     private FirebaseUser fuser;
 
@@ -63,6 +66,8 @@ public class GroupChatActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupid");
+        if (groupId == null)
+            groupId = groupId1;
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         setSupportActionBar(findViewById(R.id.toolbar));
@@ -99,6 +104,8 @@ public class GroupChatActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.child("participants").getChildren()) {
                     if (!Objects.requireNonNull(snapshot.getKey()).equals(fuser.getUid()))
                         users.add(snapshot.getKey());
+                    else
+                        myRole = Objects.requireNonNull(snapshot.child("role").getValue()).toString();
                 }
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
                 for (String u : users) {
@@ -300,5 +307,22 @@ public class GroupChatActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No File selected", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.group_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.groupInfo) {
+            Intent intent = new Intent(this, UserProfileActivity.class);
+            intent.putExtra("groupid", groupId);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

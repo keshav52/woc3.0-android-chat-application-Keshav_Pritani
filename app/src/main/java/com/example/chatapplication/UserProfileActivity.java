@@ -45,11 +45,17 @@ public class UserProfileActivity extends AppCompatActivity {
     private Uri imageUri;
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
     private EditText statusEdit, usernameEdit;
+    private String name;
+    private String groupid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
+
+        Intent intent = getIntent();
+        groupid = intent.getStringExtra("groupid");
         CircleImageView profile_image = findViewById(R.id.profile_image);
         TextView username = findViewById(R.id.usernameTextView);
         TextView status = findViewById(R.id.statusTextView);
@@ -59,8 +65,18 @@ public class UserProfileActivity extends AppCompatActivity {
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         assert fuser != null;
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-
+        reference = FirebaseDatabase.getInstance().getReference();
+        String store = "";
+        name = "";
+        if (groupid != null) {
+            reference = reference.child("Groups").child(groupid);
+            store = "GroupPhotos";
+            findViewById(R.id.participantsList).setVisibility(View.VISIBLE);
+        } else {
+            reference = reference.child("Users").child(fuser.getUid());
+            store = "UserPhotos";
+            name = fuser.getUid();
+        }
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -70,6 +86,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 status.setText(user.getStatus());
                 usernameEdit.setText(user.getName());
                 statusEdit.setText(user.getStatus());
+                name = user.getName();
                 if (!user.getImageURL().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
@@ -81,7 +98,7 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
-        storageReference = FirebaseStorage.getInstance().getReference("UserPhotos");
+        storageReference = FirebaseStorage.getInstance().getReference(store);
         profile_imageButton.setOnClickListener(view -> openImage());
     }
 
@@ -104,7 +121,7 @@ public class UserProfileActivity extends AppCompatActivity {
         pd.show();
 
         if (imageUri != null) {
-            final StorageReference fileReference = storageReference.child(fuser.getUid() + "." + getFileExtension(imageUri));
+            final StorageReference fileReference = storageReference.child(name + "." + getFileExtension(imageUri));
 
             uploadTask = fileReference.putFile(imageUri);
             uploadTask.continueWithTask(task -> {
@@ -119,7 +136,10 @@ public class UserProfileActivity extends AppCompatActivity {
                     assert downloadUri != null;
                     String mUri = downloadUri.toString();
 
-                    reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+                    if (groupid != null)
+                        reference = FirebaseDatabase.getInstance().getReference("Groups").child(groupid);
+                    else
+                        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("imageURL", "" + mUri);
                     reference.updateChildren(map);
@@ -155,7 +175,11 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     public void updateDetails(View view) {
-        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        DatabaseReference reference1;
+        if (groupid != null)
+            reference1 = FirebaseDatabase.getInstance().getReference("Groups").child(groupid);
+        else
+            reference1 = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("name", usernameEdit.getText().toString());
         hashMap.put("status", statusEdit.getText().toString());
@@ -192,5 +216,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void backToHome(View view) {
         this.finish();
+    }
+
+    public void participants(View view) {
+        startActivity(new Intent(this,GroupAddParticipantsActivity.class));
     }
 }

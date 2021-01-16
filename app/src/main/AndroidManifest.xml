@@ -16,8 +16,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication.NoActionBar">
-        <activity android:name=".GroupChatActivity"
-            android:parentActivityName=".MessageActivity"/>
+        <activity
+            android:name=".GroupAddParticipantsActivity"
+            android:parentActivityName=".GroupChatActivity"/>
+        <activity
+            android:name=".GroupChatActivity"
+            android:parentActivityName=".MessageActivity" />
         <activity
             android:name=".CreateGroupActivity"
             android:parentActivityName=".MessageActivity" />

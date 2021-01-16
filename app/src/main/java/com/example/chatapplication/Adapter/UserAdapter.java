@@ -1,5 +1,7 @@
 package com.example.chatapplication.Adapter;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -33,8 +35,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import static com.example.chatapplication.GroupChatActivity.groupId;
+import static com.example.chatapplication.GroupChatActivity.myRole;
 
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
@@ -72,6 +78,125 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             case "group":
                 lastGroupMessage(user.getId(), holder.last_msg, holder.lastTime);
                 break;
+            case "participant": {
+                holder.roleTextView.setVisibility(View.VISIBLE);
+                DatabaseReference commonRef = FirebaseDatabase.getInstance().getReference("Groups").child(groupId).child("participants");
+                commonRef.child(user.getId()).addValueEventListener(new ValueEventListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            holder.roleTextView.setText("(" + Objects.requireNonNull(snapshot.child("role").getValue()).toString() + ")");
+                            holder.roleTextView.setTypeface(null, Typeface.BOLD);
+                            holder.roleTextView.setTextSize(16);
+                        } else {
+                            holder.roleTextView.setText("(Not a Member)");
+                            holder.roleTextView.setTypeface(null);
+                            holder.roleTextView.setTextSize(14);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                holder.itemView.setOnClickListener(v ->
+                        commonRef.child(user.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                                String[] options;
+                                if (snapshot.exists()) {
+                                    String role = Objects.requireNonNull(snapshot.child("role").getValue()).toString();
+                                    builder.setTitle("Choose Role");
+                                    if (myRole.equals("Creator")) {
+                                        if (role.equals("Admin")) {
+                                            options = new String[]{"Remove Admin Rights of the Participant", "Remove Participant from the Group"};
+                                            builder.setItems(options, (dialog, which) -> {
+                                                if (which == 0) {
+                                                    removeAdminRights(snapshot.getKey());
+                                                } else if (which == 1) {
+                                                    removeParticipant(snapshot.getKey());
+                                                }
+                                            }).show();
+                                        } else if (role.equals("Member")) {
+                                            options = new String[]{"Make Admin to this Participant", "Remove Participant from the Group"};
+                                            builder.setItems(options, (dialog, which) -> {
+                                                if (which == 0) {
+                                                    makeAdmin(snapshot.getKey());
+                                                } else if (which == 1) {
+                                                    removeParticipant(snapshot.getKey());
+                                                }
+                                            }).show();
+                                        }
+                                    } else if (myRole.equals("Admin")) {
+                                        if (role.equals("Admin")) {
+                                            options = new String[]{"Remove Admin Rights of the Participant", "Remove Participant from the Group"};
+                                            builder.setItems(options, (dialog, which) -> {
+                                                if (which == 0) {
+                                                    removeAdminRights(snapshot.getKey());
+                                                } else if (which == 1) {
+                                                    removeParticipant(snapshot.getKey());
+                                                }
+                                            }).show();
+                                        }
+                                        if (role.equals("Member")) {
+                                            options = new String[]{"Make Admin to this Participant", "Remove Participant from the Group"};
+                                            builder.setItems(options, (dialog, which) -> {
+                                                if (which == 0) {
+                                                    makeAdmin(snapshot.getKey());
+                                                } else if (which == 1) {
+                                                    removeParticipant(snapshot.getKey());
+                                                }
+                                            }).show();
+                                        }
+                                    }
+                                } else {
+                                    builder.setTitle("Add Participant").setMessage("Add this user to the Group")
+                                            .setPositiveButton("Add", (dialog, which) -> addParticipant(snapshot.getKey()))
+                                            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                                            .show();
+                                }
+                            }
+
+                            private void makeAdmin(String key) {
+                                commonRef.child(key).child("role").setValue("Admin")
+                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, user.getName() + " is now Admin", Toast.LENGTH_SHORT).show())
+                                        .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
+                            }
+
+                            private void addParticipant(String key) {
+                                HashMap<String, String> participant = new HashMap<>();
+                                participant.put("role", "Member");
+                                participant.put("joined on", new Date().toLocaleString());
+                                commonRef.child(key).setValue(participant)
+                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, "User Added to the Group as a Member", Toast.LENGTH_LONG).show())
+                                        .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
+                            }
+
+                            private void removeParticipant(String key) {
+                                commonRef.child(key).removeValue()
+                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, user.getName() + " is removed from the Group", Toast.LENGTH_SHORT).show())
+                                        .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
+                            }
+
+                            private void removeAdminRights(String key) {
+                                commonRef.child(key).child("role").setValue("Member")
+                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, user.getName() + "'s Admin rights were Removed", Toast.LENGTH_SHORT).show())
+                                        .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        }));
+            }
+            case "user":
+                holder.last_msg.setText(user.getStatus());
+                break;
             case "request":
                 holder.acceptRequest.setVisibility(View.VISIBLE);
                 holder.declineRequest.setVisibility(View.VISIBLE);
@@ -104,7 +229,77 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     private void lastGroupMessage(String id, TextView last_msg, TextView lastTime) {
+        theLastMessage = "default";
+        final Date[] d = {new Date()};
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert firebaseUser != null;
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups").child(id);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DatabaseReference reference = ref.child("Messages").child(Objects.requireNonNull(snapshot.child("lastSeen").getValue()).toString());
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Chat chat = dataSnapshot.getValue(Chat.class);
+                        assert chat != null;
+                        FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                theLastMessage = "";
+                                if (chat.getSender().equals(firebaseUser.getUid()))
+                                    theLastMessage += "You: ";
+                                else {
+                                    theLastMessage += Objects.requireNonNull(snapshot.child("name").getValue()).toString() + ": ";
+                                }
+                                if (chat.getType().equals("text"))
+                                    theLastMessage += chat.getMessage();
+                                else {
+                                    theLastMessage += "Sent ";
+                                    if (chat.getType().equals("image")) theLastMessage += "an ";
+                                    else theLastMessage += "a ";
+                                    theLastMessage += chat.getType();
+                                    if (!chat.getType().equals("image"))
+                                        theLastMessage += " document";
+                                }
+                                d[0] = chat.getTime();
 
+                                if (!theLastMessage.equals("default")) {
+                                    last_msg.setText(theLastMessage);
+                                    if (d[0] != null) {
+                                        Date current = new Date();
+                                        DateFormat smf = SimpleDateFormat.getDateInstance();
+                                        String last = smf.format(d[0]);
+                                        if (smf.format(d[0]).equals(smf.format(current))) {
+                                            smf = SimpleDateFormat.getTimeInstance();
+                                            last = smf.format(d[0]);
+                                        }
+                                        lastTime.setText(last);
+                                    }
+                                    theLastMessage = "default";
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
@@ -196,7 +391,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         private final CardView onlineSymbol;
         private final TextView last_msg;
         private final TextView lastTime;
-        public TextView username;
+        public TextView username, roleTextView;
         public ImageView profile_image, acceptRequest, declineRequest;
 
         public ViewHolder(View itemView) {
@@ -206,6 +401,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             profile_image = itemView.findViewById(R.id.profile_image);
             last_msg = itemView.findViewById(R.id.lastMessage);
             lastTime = itemView.findViewById(R.id.lastTime);
+            roleTextView = itemView.findViewById(R.id.participantRole);
             onlineSymbol = itemView.findViewById(R.id.onlineSymbol);
             acceptRequest = itemView.findViewById(R.id.acceptRequest);
             declineRequest = itemView.findViewById(R.id.declineRequest);

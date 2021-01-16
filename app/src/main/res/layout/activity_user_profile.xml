@@ -118,5 +118,15 @@
             android:text="UPDATE"
             app:backgroundTint="#FFC107"
             android:onClick="updateDetails"/>
+
+        <Button
+            android:id="@+id/participantsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:onClick="participants"
+            android:text="Participants List"
+            android:visibility="invisible"
+            app:backgroundTint="#FFC107" />
     </LinearLayout>
 </LinearLayout>
