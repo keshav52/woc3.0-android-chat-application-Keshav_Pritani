@@ -101,11 +101,13 @@ public class MessageActivity extends AppCompatActivity {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 }
                 editor.apply();
-//                startActivity(new Intent(this,MessageActivity.class));
-//                this.finish();
                 break;
             case R.id.findUser:
                 startActivity(new Intent(this,FindUserActivity.class));
+                break;
+
+            case R.id.createGroupItem:
+                startActivity(new Intent(this,CreateGroupActivity.class));
                 break;
         }
         return true;

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapplication.Adapter.UserAdapter;
-import com.example.chatapplication.Model.Chat;
 import com.example.chatapplication.Model.User;
 import com.example.chatapplication.Notifications.Token;
 import com.example.chatapplication.R;
@@ -33,18 +32,17 @@ import java.util.Set;
 
 public class ChatFragment extends Fragment {
 
+    FirebaseUser fuser;
+    DatabaseReference reference;
+    private RecyclerView recyclerView;
+    private UserAdapter userAdapter;
+    private List<User> mUsers;
+    private Set<String> usersList;
+
     public static ChatFragment getInstance() {
         return new ChatFragment();
     }
 
-    private RecyclerView recyclerView;
-
-    private UserAdapter userAdapter;
-    private List<User> mUsers;
-
-    private Set<String> usersList;
-    FirebaseUser fuser;
-    DatabaseReference reference;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -59,19 +57,13 @@ public class ChatFragment extends Fragment {
 
         usersList = new HashSet<>();
 
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference = FirebaseDatabase.getInstance().getReference("ChatsLists").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class);
-                    assert chat != null;
-                    if(chat.getSender().equals(fuser.getUid()))
-                        usersList.add(chat.getReceiver());
-
-                    if(chat.getReceiver().equals(fuser.getUid()))
-                        usersList.add(chat.getSender());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    usersList.add(snapshot.getKey());
                 }
                 readChats();
             }
@@ -90,41 +82,29 @@ public class ChatFragment extends Fragment {
 
     private void readChats() {
         mUsers = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUsers.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-                    for (String id: usersList)
-                    {
-                        assert user != null;
-                        if(user.getId().equals(id)) {
-                            if (mUsers.size() != 0) {
-                                for(User user1 : mUsers)
-                                    if(!user.getId().equals(user1.getId()))
-                                        mUsers.add(user);
-                            }
-                            else
-                                mUsers.add(user);
-                        }
-                    }
+        for (String id : usersList) {
+            mUsers.clear();
+            reference = FirebaseDatabase.getInstance().getReference("Users").child(id);
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    assert user != null;
+                    mUsers.add(user);
+                    userAdapter = new UserAdapter(getContext(), mUsers, "chat");
+                    recyclerView.setAdapter(userAdapter);
                 }
-                userAdapter = new UserAdapter(getContext(), mUsers,"chat");
-                recyclerView.setAdapter(userAdapter);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
-    
-    
 
-    private void updateToken(String token){
+
+    private void updateToken(String token) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
         Token token1 = new Token(token);
         reference.child(fuser.getUid()).setValue(token1);

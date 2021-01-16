@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
@@ -109,66 +110,79 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         theLastMessage = "default";
         final Date[] d = {new Date()};
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
-        final boolean[] flag = {false};
-        final boolean[] seen = {false};
-        reference.addValueEventListener(new ValueEventListener() {
+        assert firebaseUser != null;
+        DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatsLists").child(firebaseUser.getUid()).child(userid);
+        chatRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if (firebaseUser != null && chat != null) {
-                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
-                                chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
-                            if (chat.getType().equals("text"))
-                                theLastMessage = chat.getMessage();
-                            else {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats").child(Objects.requireNonNull(snapshot.child("last_message").getValue()).toString());
+                final boolean[] flag = {false};
+                final boolean[] seen = {false};
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        Chat chat = dataSnapshot.getValue(Chat.class);
+                        if (chat != null) {
+                            if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
+                                    chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
                                 theLastMessage = "";
                                 if (chat.getSender().equals(firebaseUser.getUid()))
                                     theLastMessage += "You: ";
-                                theLastMessage += "Sent ";
-                                if (chat.getType().equals("image")) theLastMessage += "an ";
-                                else theLastMessage += "a ";
-                                theLastMessage += chat.getType();
-                                if (!chat.getType().equals("image")) theLastMessage += " document";
+                                if (chat.getType().equals("text"))
+                                    theLastMessage += chat.getMessage();
+                                else {
+                                    theLastMessage += "Sent ";
+                                    if (chat.getType().equals("image")) theLastMessage += "an ";
+                                    else theLastMessage += "a ";
+                                    theLastMessage += chat.getType();
+                                    if (!chat.getType().equals("image"))
+                                        theLastMessage += " document";
+                                }
+                                d[0] = chat.getTime();
+                                if (chat.getReceiver().equals(firebaseUser.getUid())) {
+                                    flag[0] = true;
+                                    seen[0] = chat.isIsseen();
+                                } else flag[0] = false;
                             }
-                            d[0] = chat.getTime();
-                            if (chat.getReceiver().equals(firebaseUser.getUid())) {
-                                flag[0] = true;
-                                seen[0] = chat.isIsseen();
-                            } else flag[0] = false;
                         }
-                    }
-                }
 
-                if (!theLastMessage.equals("default")) {
-                    last_msg.setText(theLastMessage);
-                    if (flag[0] && !seen[0]) {
-                        last_msg.setTypeface(null, Typeface.BOLD);
-                        lastTime.setTypeface(null, Typeface.BOLD);
-                        username.setTypeface(null, Typeface.BOLD);
-                        last_msg.setTextSize(16);
-                    }
-                    if (d[0] != null) {
-                        Date current = new Date();
-                        DateFormat smf = SimpleDateFormat.getDateInstance();
-                        String last = smf.format(d[0]);
-                        if (smf.format(d[0]).equals(smf.format(current))) {
-                            smf = SimpleDateFormat.getTimeInstance();
-                            last = smf.format(d[0]);
+                        if (!theLastMessage.equals("default")) {
+                            last_msg.setText(theLastMessage);
+                            if (flag[0] && !seen[0]) {
+                                last_msg.setTypeface(null, Typeface.BOLD);
+                                lastTime.setTypeface(null, Typeface.BOLD);
+                                username.setTypeface(null, Typeface.BOLD);
+                                last_msg.setTextSize(16);
+                            }
+                            if (d[0] != null) {
+                                Date current = new Date();
+                                DateFormat smf = SimpleDateFormat.getDateInstance();
+                                String last = smf.format(d[0]);
+                                if (smf.format(d[0]).equals(smf.format(current))) {
+                                    smf = SimpleDateFormat.getTimeInstance();
+                                    last = smf.format(d[0]);
+                                }
+                                lastTime.setText(last);
+                            }
+                            theLastMessage = "default";
                         }
-                        lastTime.setText(last);
                     }
-                    theLastMessage = "default";
-                }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-
         });
+
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

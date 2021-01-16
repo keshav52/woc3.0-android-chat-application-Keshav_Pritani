@@ -184,11 +184,15 @@ public class ChatActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("time", new Date());
         hashMap.put("isseen", false);
-
-        reference.child("Chats").push().setValue(hashMap);
+        String key = reference.child("Chats").push().getKey();
+        assert key != null;
+        reference.child("Chats").child(key).setValue(hashMap);
 
         final String msg = message;
 
+        DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatsLists");
+        chatRef.child(sender).child(receiver).child("last_message").setValue(key);
+        chatRef.child(receiver).child(sender).child("last_message").setValue(key);
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
