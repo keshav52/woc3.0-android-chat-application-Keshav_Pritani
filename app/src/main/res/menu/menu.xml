@@ -11,6 +11,9 @@
         android:id="@+id/modeSwitch"
         android:title="Switch to Dark Theme" />
     <item
+        android:id="@+id/createGroupItem"
+        android:title="Create New Group" />
+    <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_baseline_smartphone_24"
         android:title="Profile" />

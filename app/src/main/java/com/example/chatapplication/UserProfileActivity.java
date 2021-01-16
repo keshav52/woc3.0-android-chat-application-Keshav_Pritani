@@ -38,12 +38,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileActivity extends AppCompatActivity {
 
+    public static final int IMAGE_REQUEST = 1;
     StorageReference storageReference;
-    private static final int IMAGE_REQUEST = 1;
-    private Uri imageUri;
-    private StorageTask<UploadTask.TaskSnapshot> uploadTask;
     DatabaseReference reference;
     FirebaseUser fuser;
+    private Uri imageUri;
+    private StorageTask<UploadTask.TaskSnapshot> uploadTask;
     private EditText statusEdit, usernameEdit;
 
     @Override
@@ -81,7 +81,7 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
-        storageReference = FirebaseStorage.getInstance().getReference("uploads");
+        storageReference = FirebaseStorage.getInstance().getReference("UserPhotos");
         profile_imageButton.setOnClickListener(view -> openImage());
     }
 
@@ -104,8 +104,7 @@ public class UserProfileActivity extends AppCompatActivity {
         pd.show();
 
         if (imageUri != null) {
-            final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
-                    + "." + getFileExtension(imageUri));
+            final StorageReference fileReference = storageReference.child(fuser.getUid() + "." + getFileExtension(imageUri));
 
             uploadTask = fileReference.putFile(imageUri);
             uploadTask.continueWithTask(task -> {
@@ -129,7 +128,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     Toast.makeText(UserProfileActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
                 pd.dismiss();
-                Toast.makeText(this,"Uploaded",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Uploaded", Toast.LENGTH_LONG).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(UserProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 pd.dismiss();
@@ -166,8 +165,8 @@ public class UserProfileActivity extends AppCompatActivity {
         pd.show();
         new Handler().postDelayed((Runnable) () -> {
             pd.dismiss();
-            Toast.makeText(this,"Updated",Toast.LENGTH_LONG).show();
-        },2000);
+            Toast.makeText(this, "Updated", Toast.LENGTH_LONG).show();
+        }, 2000);
     }
 
     private void status(String status) {

@@ -16,13 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication.NoActionBar">
-        <activity android:name=".ShowProfileActivity"
-            android:parentActivityName=".FindUserActivity"/>
+        <activity android:name=".CreateGroupActivity"
+            android:parentActivityName=".MessageActivity"/>
+        <activity
+            android:name=".ShowProfileActivity"
+            android:parentActivityName=".FindUserActivity" />
         <activity
             android:name=".FindUserActivity"
             android:parentActivityName=".MessageActivity" />
         <activity android:name=".UserProfileActivity" />
-        <activity android:name=".ThemeActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

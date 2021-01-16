@@ -85,7 +85,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     friendsListsRef.child(user.getId()).child(currentId).child("status").setValue("rejected").addOnCompleteListener(task -> friendsListsRef.child(currentId).child(user.getId()).removeValue().addOnCompleteListener(task1 -> Toast.makeText(mContext, "Request Cancelled", Toast.LENGTH_SHORT).show()));
                 });
             }
-            if (user.getLastSeen().equals(""))
+            if (!this.user.equals("group") && user.getLastSeen().equals(""))
                 holder.onlineSymbol.setVisibility(View.VISIBLE);
             else
                 holder.onlineSymbol.setVisibility(View.INVISIBLE);

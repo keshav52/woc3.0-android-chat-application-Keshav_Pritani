@@ -35,6 +35,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MessageActivity extends AppCompatActivity {
 
 
+    public static String USERNAME = "";
+
     FirebaseUser firebaseUser;
     DatabaseReference reference;
     Toolbar toolbar;
@@ -64,6 +66,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 assert user != null;
+                USERNAME = user.getName();
                 Objects.requireNonNull(getSupportActionBar()).setTitle(user.getName());
             }
 
