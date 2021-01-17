@@ -25,12 +25,11 @@
         app:layout_constraintTop_toBottomOf="@+id/topView" />
 
     <TextView
-        android:id="@+id/registerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/autour_one"
         android:text="@string/welcome"
-        android:textColor="@color/colorPrimaryCont"
+        android:textColor="@color/mainText"
         android:textSize="45sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/topView"
@@ -44,7 +43,6 @@
         android:layout_height="71dp"
         android:layout_marginStart="99dp"
         android:layout_marginLeft="99dp"
-        android:layout_marginTop="224dp"
         android:layout_marginEnd="103dp"
         android:layout_marginRight="103dp"
         android:autofillHints=""
@@ -55,9 +53,10 @@
         android:ems="10"
         android:focusable="true"
         android:hint="Enter your Phone Number"
-        android:inputType="phone"
+        android:inputType="numberSigned|phone"
         android:padding="16sp"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/signBT"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,16 +65,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout1"
         android:layout_width="409dp"
-        android:layout_height="234dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/signBT"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SGVView"
-        app:layout_constraintVertical_bias="0.362"
         tools:visibility="invisible">
 
         <TextView
@@ -115,19 +111,6 @@
             app:lineColor="@color/colorPrimary"
             app:viewType="rectangle" />
 
-        <TextView
-            android:id="@+id/resetTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Didn't get the OTP?\nRESEND OTP."
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/pinView"
-            app:layout_constraintHorizontal_bias="0.473"
-            app:layout_constraintStart_toStartOf="@+id/pinView"
-            app:layout_constraintTop_toBottomOf="@+id/pinView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
@@ -136,17 +119,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/button_background"
         android:onClick="login"
         android:text="Let's go!"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/registerBT"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout1" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/registerBT"
@@ -154,7 +136,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="36dp"
         android:background="@drawable/button_background1"
         android:onClick="register"
         android:text="Register"
@@ -163,8 +145,7 @@
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signBT" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!--<EditText
         android:id="@+id/nameTextBox"

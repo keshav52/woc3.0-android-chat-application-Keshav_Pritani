@@ -16,8 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApplication.NoActionBar">
-        <activity android:name=".GroupParticipantsListActivity"
-            android:parentActivityName=".GroupChatActivity"/>
+        <activity
+            android:name=".GroupParticipantsListActivity"
+            android:parentActivityName=".GroupChatActivity" />
         <activity
             android:name=".GroupAddParticipantsActivity"
             android:parentActivityName=".GroupParticipantsListActivity" />

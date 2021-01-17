@@ -8,7 +8,7 @@
 
     <View
         android:id="@+id/topView"
-        android:layout_width="417dp"
+        android:layout_width="match_parent"
         android:layout_height="90dp"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,12 +26,11 @@
         app:layout_constraintTop_toBottomOf="@+id/topView" />
 
     <TextView
-        android:id="@+id/registerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/autour_one"
         android:text="Register"
-        android:textColor="@color/colorPrimaryCont"
+        android:textColor="@color/mainText"
         android:textSize="45sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/topView"
@@ -47,7 +46,7 @@
         android:fontFamily="@font/autour_one"
         android:gravity="center_horizontal"
         android:text="You're cute. Can I have your number?"
-        android:textColor="@color/colorPrimaryFore"
+        android:textColor="@color/textAlt"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.461"
@@ -60,6 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +83,7 @@
             android:ems="10"
             android:focusable="true"
             android:hint="Enter Your Phone"
-            android:inputType="phone"
+            android:inputType="textNoSuggestions|phone"
             android:padding="16sp"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +97,6 @@
             android:layout_height="71dp"
             android:layout_marginStart="99dp"
             android:layout_marginLeft="99dp"
-            android:layout_marginTop="40dp"
             android:layout_marginEnd="103dp"
             android:layout_marginRight="103dp"
             android:autoText="false"
@@ -108,7 +107,7 @@
             android:drawablePadding="16sp"
             android:ems="10"
             android:hint="Enter Your Name"
-            android:inputType="text"
+            android:inputType="textNoSuggestions|textPersonName|text|textCapWords"
             android:padding="16sp"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -132,6 +131,7 @@
             android:drawablePadding="16sp"
             android:ems="10"
             android:hint="Enter whatever you like.."
+            android:inputType="textMultiLine|textCapSentences"
             android:padding="16sp"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,17 +143,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout1"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="234dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SGVView"
-        app:layout_constraintVertical_bias="0.494">
+        app:layout_constraintTop_toBottomOf="@+id/SGVView">
 
         <TextView
             android:id="@+id/textView_noti"
@@ -192,19 +189,6 @@
             app:lineColor="@android:color/darker_gray"
             app:viewType="rectangle" />
 
-        <TextView
-            android:id="@+id/resetTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Didn't get the OTP?\nRESEND OTP."
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/pinView"
-            app:layout_constraintHorizontal_bias="0.473"
-            app:layout_constraintStart_toStartOf="@+id/pinView"
-            app:layout_constraintTop_toBottomOf="@+id/pinView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button

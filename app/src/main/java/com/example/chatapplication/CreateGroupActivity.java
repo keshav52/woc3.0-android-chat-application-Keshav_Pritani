@@ -140,7 +140,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         String d = new Date().toLocaleString();
         String key = reference.push().getKey();
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("id",key);
+        hashMap.put("id", key);
         hashMap.put("name", groupNameEditText.getText().toString());
         hashMap.put("status", groupDescriptionEditText.getText().toString());
         hashMap.put("imageURL", groupIconUrl);
@@ -165,6 +165,26 @@ public class CreateGroupActivity extends AppCompatActivity {
                 });
             }
         });
+    }
 
+    private void status(String status) {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastSeen", status);
+
+        reference1.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status(new Date().toLocaleString());
     }
 }

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +13,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.example.chatapplication.Adapter.MessageActivityAdapter;
 import com.example.chatapplication.Model.User;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
@@ -29,8 +27,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -107,11 +103,11 @@ public class MessageActivity extends AppCompatActivity {
                 editor.apply();
                 break;
             case R.id.findUser:
-                startActivity(new Intent(this,FindUserActivity.class));
+                startActivity(new Intent(this, FindUserActivity.class));
                 break;
 
             case R.id.createGroupItem:
-                startActivity(new Intent(this,CreateGroupActivity.class));
+                startActivity(new Intent(this, CreateGroupActivity.class));
                 break;
         }
         return true;
@@ -123,13 +119,10 @@ public class MessageActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem item = menu.getItem(0);
 
-        if(prefs.getString("modeState", "dark").equals("dark"))
-        {
+        if (prefs.getString("modeState", "dark").equals("dark")) {
             item.setTitle("Switch to Light Theme");
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
-        else
-        {
+        } else {
             item.setTitle("Switch to Dark Theme");
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }

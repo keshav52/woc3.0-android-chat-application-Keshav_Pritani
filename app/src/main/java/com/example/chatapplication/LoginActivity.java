@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,11 +39,11 @@ import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private final String TAG = "In LoginActivity:";
     FirebaseUser firebaseUser;
-    private EditText phoneNumber, password;
+    private EditText phoneNumber;
     private Button btn_signIn;
     private FirebaseAuth auth;
-    private final String TAG = "In LoginActivity:";
     private PinView pinView;
     private TextView textU;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
@@ -64,16 +65,19 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         phoneNumber = findViewById(R.id.phoneTextBox);
         pinView = findViewById(R.id.pinView);
         textU = findViewById(R.id.textView_noti);
         second = findViewById(R.id.constraintLayout1);
         btn_signIn = findViewById(R.id.signBT);
         registerBtn = findViewById(R.id.registerBT);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         auth = FirebaseAuth.getInstance();
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -83,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "onVerificationCompleted:" + credential);
                 Toast.makeText(LoginActivity.this, "onVerificationCompleted:" + credential, Toast.LENGTH_LONG).show();
                 pinView.setText(credential.getSmsCode());
-                PhoneAuthCredential credential1 = PhoneAuthProvider.getCredential(codeBySystem, credential.getSmsCode());
+                PhoneAuthCredential credential1 = PhoneAuthProvider.getCredential(codeBySystem, Objects.requireNonNull(credential.getSmsCode()));
                 signInWithPhoneAuthCredential(credential1);
             }
 
@@ -163,16 +167,15 @@ public class LoginActivity extends AppCompatActivity {
                                             .build();
                             PhoneAuthProvider.verifyPhoneNumber(options);
                             btn_signIn.setText("Verify");
-                            registerBtn.setText("Resend OTP");
+                            registerBtn.setVisibility(View.GONE);
                             phoneNumber.setVisibility(View.GONE);
                             second.setVisibility(View.VISIBLE);
                             reference.removeEventListener(this);
                         } catch (Exception e) {
                             Log.d(TAG, e.toString());
                         }
-                    }
-                    else
-                        Toast.makeText(LoginActivity.this,"This Phone number is not registered with us,Please Register.",Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(LoginActivity.this, "This Phone number is not registered with us,Please Register.", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -184,12 +187,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
-        if(registerBtn.getText().equals("Resend OTP"))
-        {
-            btn_signIn.setText("Verify  ");
-            login(null);
-            return;
-        }
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }

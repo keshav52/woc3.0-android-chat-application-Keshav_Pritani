@@ -87,7 +87,7 @@ public class UserFragment extends Fragment {
                             }
                             if (da == -1)
                                 mUsers.add(user);
-                            else mUsers.add(da,user);
+                            else mUsers.add(da, user);
                             userAdapter = new UserAdapter(getContext(), mUsers, "user");
                             recyclerView.setAdapter(userAdapter);
                         }

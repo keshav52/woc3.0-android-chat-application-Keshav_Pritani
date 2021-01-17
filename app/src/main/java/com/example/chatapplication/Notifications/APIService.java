@@ -1,8 +1,5 @@
 package com.example.chatapplication.Notifications;
 
-import com.example.chatapplication.Notifications.MyResponse;
-import com.example.chatapplication.Notifications.Sender;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;

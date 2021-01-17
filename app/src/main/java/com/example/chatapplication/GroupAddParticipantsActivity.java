@@ -14,18 +14,22 @@ import com.example.chatapplication.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static com.example.chatapplication.GroupChatActivity.groupId;
 
 public class GroupAddParticipantsActivity extends AppCompatActivity {
 
-    private ValueEventListener lis;
     public static String groupId1;
+    private ValueEventListener lis;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +70,7 @@ public class GroupAddParticipantsActivity extends AppCompatActivity {
                                     }
                                     if (da == -1)
                                         mUsers.add(user);
-                                    else mUsers.add(da,user);
+                                    else mUsers.add(da, user);
                                     UserAdapter userAdapter = new UserAdapter(GroupAddParticipantsActivity.this, mUsers, "participant");
                                     recyclerView.setAdapter(userAdapter);
                                 }
@@ -94,5 +98,27 @@ public class GroupAddParticipantsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         FirebaseDatabase.getInstance().getReference("Users").removeEventListener(lis);
+    }
+
+
+    private void status(String status) {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastSeen", status);
+
+        reference1.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status(new Date().toLocaleString());
     }
 }

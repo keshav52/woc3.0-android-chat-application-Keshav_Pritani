@@ -15,7 +15,6 @@
         android:padding="20dp">
 
         <ImageView
-            android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -77,6 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Send Request"
+            android:textColor="@color/black"
             app:backgroundTint="#FFC107" />
 
         <TextView
@@ -86,7 +86,7 @@
             android:layout_marginTop="30dp"
             android:gravity="center_horizontal"
             android:text="TextView"
-            android:textColor="@color/mainText"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -97,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Accept Request"
+            android:textColor="@color/black"
             android:visibility="gone"
             app:backgroundTint="#FFC107" />
 
@@ -106,6 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Decline Request"
+            android:textColor="@color/black"
             android:visibility="gone"
             app:backgroundTint="#FFC107" />
 
@@ -115,6 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Remove Friend"
+            android:textColor="@color/black"
             android:visibility="gone"
             app:backgroundTint="#FFC107" />
 

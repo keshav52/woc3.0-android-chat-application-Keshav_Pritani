@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,7 +33,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
@@ -67,10 +71,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*requestWindowFeature(1);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getWindow().setStatusBarColor(Color.BLUE);*/
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_register);
 
         topText = findViewById(R.id.topText);
@@ -94,27 +97,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
-            public void onVerificationCompleted(PhoneAuthCredential credential) {
+            public void onVerificationCompleted(@NotNull PhoneAuthCredential credential) {
                 Log.d(TAG, "onVerificationCompleted:" + credential);
                 Toast.makeText(RegisterActivity.this, "onVerificationCompleted:" + credential, Toast.LENGTH_LONG).show();
                 pinView.setText(credential.getSmsCode());
-                PhoneAuthCredential credential1 = PhoneAuthProvider.getCredential(codeBySystem, credential.getSmsCode());
+                PhoneAuthCredential credential1 = PhoneAuthProvider.getCredential(codeBySystem, Objects.requireNonNull(credential.getSmsCode()));
                 signInWithPhoneAuthCredential(credential1);
             }
 
             @Override
-            public void onVerificationFailed(FirebaseException e) {
+            public void onVerificationFailed(@NotNull FirebaseException e) {
                 Log.w(TAG, "onVerificationFailed", e);
-
                 Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-
-//                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-//                    // Invalid request
-//                    // ...
-//                } else if (e instanceof FirebaseTooManyRequestsException) {
-//                    // The SMS quota for the project has been exceeded
-//                    // ...
-//                }
             }
 
             @Override
@@ -151,6 +145,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         hashMap.put("imageURL", "default");
                         hashMap.put("status", status.getText().toString());
                         hashMap.put("lastSeen", "");
+                        hashMap.put("search", name.getText().toString().toLowerCase());
                         reference.setValue(hashMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
                                 Intent intent = new Intent(RegisterActivity.this, MessageActivity.class);
@@ -176,13 +171,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (next.getText().equals("Let's go!")) {
             String name = this.name.getText().toString();
             String pno = phoneNo.getText().toString();
-            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(pno)) {DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
+            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(pno)) {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         boolean flag = true;
                         for (DataSnapshot snap : snapshot.getChildren()) {
                             User user = snap.getValue(User.class);
+                            assert user != null;
                             if (pno.equals(user.getPhoneNo())) {
                                 flag = false;
                                 break;
@@ -206,9 +203,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             } catch (Exception e) {
                                 Log.d(TAG, e.toString());
                             }
-                        }
-                        else
-                            Toast.makeText(RegisterActivity.this,"This Phone number is already registered with us,Please Login.",Toast.LENGTH_LONG).show();
+                        } else
+                            Toast.makeText(RegisterActivity.this, "This Phone number is already registered with us,Please Login.", Toast.LENGTH_LONG).show();
                     }
 
                     @Override

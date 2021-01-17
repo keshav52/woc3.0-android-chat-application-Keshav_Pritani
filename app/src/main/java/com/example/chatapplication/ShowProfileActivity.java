@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -100,7 +102,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                             request.setVisibility(View.GONE);
                             TextView r = findViewById(R.id.requestStatus);
                             r.setVisibility(View.VISIBLE);
-                            r.setText("Your Request was Accepted.");
+                            r.setText("You both are Friends");
                             Button remove = findViewById(R.id.removeFriend);
                             remove.setVisibility(View.VISIBLE);
                             remove.setOnClickListener(v -> friendsListsRef.child(fuser.getUid()).child(userId).removeValue().addOnCompleteListener(task -> friendsListsRef.child(userId).child(fuser.getUid()).removeValue().addOnCompleteListener(task1 -> {
@@ -110,7 +112,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                                 findViewById(R.id.declineRequest).setVisibility(View.GONE);
                                 findViewById(R.id.removeFriend).setVisibility(View.GONE);
                                 request.setText("Send Request");
-                                status ="new";
+                                status = "new";
                                 Toast.makeText(ShowProfileActivity.this, "Friend Removed", Toast.LENGTH_LONG).show();
                             })));
                         } else if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("received")) {
@@ -175,9 +177,7 @@ public class ShowProfileActivity extends AppCompatActivity {
         AtomicBoolean flag = new AtomicBoolean(true);
         Snackbar.make(getWindow().getDecorView().getRootView(), "Sending Request..", BaseTransientBottomBar.LENGTH_LONG)
                 .setDuration(3000)
-                .setAction("Undo", v -> {
-                    flag.set(false);
-                }).show();
+                .setAction("Undo", v -> flag.set(false)).show();
         new Handler().postDelayed(() -> {
             if (flag.get())
                 friendsListsRef
@@ -203,5 +203,26 @@ public class ShowProfileActivity extends AppCompatActivity {
 
     public void backToAllUsers(View view) {
         this.finish();
+    }
+
+    private void status(String status) {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastSeen", status);
+
+        reference1.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status(new Date().toLocaleString());
     }
 }

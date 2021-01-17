@@ -70,7 +70,7 @@ public class UserProfileActivity extends AppCompatActivity {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         assert fuser != null;
         reference = FirebaseDatabase.getInstance().getReference();
-        String store = "";
+        String store;
         name = "";
         if (groupid != null) {
             reference = reference.child("Groups").child(groupid);
@@ -244,7 +244,7 @@ public class UserProfileActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference("Groups").child(groupId).child("participants").child(fuser.getUid()).removeValue()
                 .addOnSuccessListener(aVoid -> Toast.makeText(this, "Group Left", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show());
-        startActivity(new Intent(this,MessageActivity.class));
+        startActivity(new Intent(this, MessageActivity.class));
         this.finish();
     }
 }

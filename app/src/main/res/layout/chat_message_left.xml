@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
@@ -10,7 +11,10 @@
         android:id="@+id/profile_image"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/ic_baseline_person_241"
+        app:civ_border_color="@color/mainText"
+        app:civ_border_width="2dp"
+        tools:ignore="VectorDrawableCompat" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -30,7 +34,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:text="Name"
-            android:textColor="@color/mainText"
+            android:textColor="@color/black"
             android:textStyle="bold"
             android:visibility="gone" />
 
@@ -48,7 +52,7 @@
             android:paddingEnd="5dp"
             android:paddingRight="5dp"
             android:text="Message"
-            android:textColor="@color/mainText"
+            android:textColor="@color/black"
             android:textSize="18sp" />
 
         <TextView
@@ -65,7 +69,7 @@
             android:layout_marginRight="10dp"
             android:gravity="right"
             android:text="time"
-            android:textColor="@color/mainText" />
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -101,6 +105,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
             android:text="Delivered"
+            android:textColor="@color/black"
             android:textSize="11sp"
             android:visibility="gone" />
 
@@ -129,6 +134,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
             android:text="Delivered"
+            android:textColor="@color/black"
             android:textSize="11sp"
             android:visibility="gone" />
 

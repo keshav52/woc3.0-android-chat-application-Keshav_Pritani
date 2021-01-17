@@ -13,7 +13,6 @@ import android.provider.OpenableColumns;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -341,7 +340,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void addFiles(View view) {
-        ImageButton btn = findViewById(R.id.addFileImageView);
         CharSequence[] type = new CharSequence[]{
                 "Images", "PDFs", "MS Word Files", "Any Other Type"
         };
@@ -414,7 +412,6 @@ public class ChatActivity extends AppCompatActivity {
                     Toast.makeText(ChatActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
                 pd.dismiss();
-//                Toast.makeText(this, "Sent", Toast.LENGTH_LONG).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(ChatActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 pd.dismiss();

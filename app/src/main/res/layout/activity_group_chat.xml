@@ -69,7 +69,7 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Type Your Message"
-        android:inputType="text"
+        android:inputType="textMultiLine|text|textCapSentences|textImeMultiLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendButton"
         app:layout_constraintStart_toEndOf="@+id/addFileImageView" />
@@ -80,14 +80,15 @@
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:background="@color/mainBackground"
+        android:background="@android:color/transparent"
         android:cropToPadding="false"
         android:onClick="addFiles"
         android:scaleType="fitCenter"
-        android:src="@drawable/add_file"
+        android:src="@drawable/attach_file"
         app:layout_constraintBottom_toBottomOf="@+id/messageBox"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/messageBox" />
+        app:layout_constraintTop_toTopOf="@+id/messageBox"
+        tools:ignore="VectorDrawableCompat" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/sendButton"
@@ -102,7 +103,6 @@
         app:layout_constraintTop_toTopOf="@+id/messageBox">
 
         <ImageView
-            android:id="@+id/imageView7"
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_margin="10dp"

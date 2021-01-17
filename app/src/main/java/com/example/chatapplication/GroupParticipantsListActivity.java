@@ -22,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static com.example.chatapplication.GroupChatActivity.groupId;
@@ -122,5 +124,27 @@ public class GroupParticipantsListActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void status(String status) {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastSeen", status);
+
+        reference1.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status(new Date().toLocaleString());
     }
 }

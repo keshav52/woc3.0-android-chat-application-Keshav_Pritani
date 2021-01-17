@@ -52,7 +52,7 @@ import static com.example.chatapplication.UserProfileActivity.IMAGE_REQUEST;
 
 public class GroupChatActivity extends AppCompatActivity {
 
-    public static String groupId, myRole, myName,groupName;
+    public static String groupId, myRole, myName, groupName;
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
     private Uri imageUri;
     private EditText text_send;
@@ -331,4 +331,27 @@ public class GroupChatActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    private void status(String status) {
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastSeen", status);
+
+        reference1.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status(new Date().toLocaleString());
+    }
+
 }

@@ -8,6 +8,7 @@ public class User {
     private String imageURL;
     private String status;
     private String lastSeen;
+    private String search;
 
 
     public String getId() {
@@ -56,5 +57,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
     }
 }

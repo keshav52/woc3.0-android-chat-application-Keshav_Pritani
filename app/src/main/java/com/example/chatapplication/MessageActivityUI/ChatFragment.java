@@ -48,7 +48,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_user, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -100,7 +100,7 @@ public class ChatFragment extends Fragment {
                     }
                     if (da == -1)
                         mUsers.add(user);
-                    else mUsers.add(da,user);
+                    else mUsers.add(da, user);
                     userAdapter = new UserAdapter(getContext(), mUsers, "chat");
                     recyclerView.setAdapter(userAdapter);
                 }

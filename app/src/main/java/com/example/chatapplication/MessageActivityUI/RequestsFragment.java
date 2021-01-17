@@ -38,7 +38,7 @@ public class RequestsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_requests, container, false);
+        View view = inflater.inflate(R.layout.fragment_user, container, false);
 
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -76,7 +76,7 @@ public class RequestsFragment extends Fragment {
                         }
                     });
                 }
-                if(!flag[0]) {
+                if (!flag[0]) {
                     UserAdapter userAdapter = new UserAdapter(getContext(), mUsers, "request");
                     recyclerView.setAdapter(userAdapter);
                 }

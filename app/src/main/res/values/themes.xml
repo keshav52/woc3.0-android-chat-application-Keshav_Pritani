@@ -22,11 +22,4 @@
         <item name="colorOnPrimary">@color/white</item>
     </style>
 
-    <style name="Theme.ChatApplication.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.ChatApplication.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="MenuStyle" parent="Theme.AppCompat.Light">
-        <item name="android:background">@android:color/white</item>
-    </style>
 </resources>
