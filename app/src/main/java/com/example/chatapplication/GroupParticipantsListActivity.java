@@ -1,19 +1,18 @@
-package com.example.chatapplication.MessageActivityUI;
+package com.example.chatapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapplication.Adapter.UserAdapter;
 import com.example.chatapplication.Model.User;
-import com.example.chatapplication.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,53 +22,48 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class UserFragment extends Fragment {
+import static com.example.chatapplication.GroupChatActivity.groupId;
+import static com.example.chatapplication.GroupChatActivity.myRole;
+
+public class GroupParticipantsListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private ArrayList<String> u;
 
-    private UserAdapter userAdapter;
-    private List<User> mUsers;
-
-    public static UserFragment getInstance() {
-        return new UserFragment();
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_user, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_group_participants_list);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mUsers = new ArrayList<>();
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Participants List");
 
         readUsers();
-        return view;
     }
 
     private void readUsers() {
+        ArrayList<User> mUsers = new ArrayList<>();
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         assert firebaseUser != null;
-        DatabaseReference friendsReference = FirebaseDatabase.getInstance().getReference("FriendsLists").child(firebaseUser.getUid());
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("Groups").child(groupId).child("participants");
 
-        ArrayList<String> u = new ArrayList<>();
-        friendsReference.addValueEventListener(new ValueEventListener() {
+        u = new ArrayList<>();
+        groupRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 u.clear();
                 mUsers.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (Objects.requireNonNull(snapshot.child("status").getValue()).toString().equals("accepted")) {
-                        u.add(snapshot.getKey());
-                    }
+                    u.add(snapshot.getKey());
                 }
                 for (String u1 : u) {
                     reference.child(u1).addValueEventListener(new ValueEventListener() {
@@ -87,8 +81,8 @@ public class UserFragment extends Fragment {
                             }
                             if (da == -1)
                                 mUsers.add(user);
-                            else mUsers.add(da,user);
-                            userAdapter = new UserAdapter(getContext(), mUsers, "user");
+                            else mUsers.add(da, user);
+                            UserAdapter userAdapter = new UserAdapter(GroupParticipantsListActivity.this, mUsers, "participant");
                             recyclerView.setAdapter(userAdapter);
                         }
 
@@ -106,5 +100,27 @@ public class UserFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.group_menu, menu);
+        MenuItem item = menu.getItem(0);
+        item.setIcon(R.drawable.ic_baseline_add_circle_outline_24);
+        if (!myRole.equals("Creator") && !myRole.equals("Admin")) {
+            item.setVisible(false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.groupInfo) {
+            Intent intent = new Intent(this, GroupAddParticipantsActivity.class);
+            intent.putExtra("groupid", groupId);
+            intent.putExtra("list", u);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -31,6 +31,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
@@ -43,8 +46,9 @@ public class LoginActivity extends AppCompatActivity {
     private PinView pinView;
     private TextView textU;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    private ConstraintLayout first, second;
+    private ConstraintLayout second;
     private String codeBySystem;
+    private Button registerBtn;
 
     @Override
     protected void onStart() {
@@ -69,12 +73,13 @@ public class LoginActivity extends AppCompatActivity {
         textU = findViewById(R.id.textView_noti);
         second = findViewById(R.id.constraintLayout1);
         btn_signIn = findViewById(R.id.signBT);
+        registerBtn = findViewById(R.id.registerBT);
 
         auth = FirebaseAuth.getInstance();
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
-            public void onVerificationCompleted(PhoneAuthCredential credential) {
+            public void onVerificationCompleted(@NotNull PhoneAuthCredential credential) {
                 Log.d(TAG, "onVerificationCompleted:" + credential);
                 Toast.makeText(LoginActivity.this, "onVerificationCompleted:" + credential, Toast.LENGTH_LONG).show();
                 pinView.setText(credential.getSmsCode());
@@ -83,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onVerificationFailed(FirebaseException e) {
+            public void onVerificationFailed(@NotNull FirebaseException e) {
                 Log.w(TAG, "onVerificationFailed", e);
                 Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -129,18 +134,19 @@ public class LoginActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(pno)) {
             Toast.makeText(LoginActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
         } else if (btn_signIn.getText().equals("Verify")) {
-            String OTP = pinView.getText().toString();
+            String OTP = Objects.requireNonNull(pinView.getText()).toString();
             textU.setText("Verifying");
             PhoneAuthCredential credential1 = PhoneAuthProvider.getCredential(codeBySystem, OTP);
             signInWithPhoneAuthCredential(credential1);
         } else {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users");
-            reference.addValueEventListener(new ValueEventListener() {
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     boolean flag = false;
                     for (DataSnapshot snap : snapshot.getChildren()) {
                         User user = snap.getValue(User.class);
+                        assert user != null;
                         if (pno.equals(user.getPhoneNo())) {
                             flag = true;
                             break;
@@ -157,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                                             .build();
                             PhoneAuthProvider.verifyPhoneNumber(options);
                             btn_signIn.setText("Verify");
+                            registerBtn.setText("Resend OTP");
                             phoneNumber.setVisibility(View.GONE);
                             second.setVisibility(View.VISIBLE);
                             reference.removeEventListener(this);
@@ -177,12 +184,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
+        if(registerBtn.getText().equals("Resend OTP"))
+        {
+            btn_signIn.setText("Verify  ");
+            login(null);
+            return;
+        }
         Intent intent = new Intent(this, RegisterActivity.class);
-        startActivity(intent);
-    }
-
-    public void forgotPassword(View view) {
-        Intent intent = new Intent(this, MessageActivity.class);
         startActivity(intent);
     }
 }

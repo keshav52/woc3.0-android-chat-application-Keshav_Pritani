@@ -50,6 +50,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private final String user;
     String theLastMessage;
 
+
     public UserAdapter(Context mContext, List<User> mUsers, String user) {
         this.mUsers = Collections.unmodifiableList(new ArrayList<>(mUsers));
         this.mContext = mContext;
@@ -78,7 +79,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             case "group":
                 lastGroupMessage(user.getId(), holder.last_msg, holder.lastTime);
                 break;
-            case "participant": {
+            case "participant":
                 holder.roleTextView.setVisibility(View.VISIBLE);
                 DatabaseReference commonRef = FirebaseDatabase.getInstance().getReference("Groups").child(groupId).child("participants");
                 commonRef.child(user.getId()).addValueEventListener(new ValueEventListener() {
@@ -193,7 +194,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                             }
                         }));
-            }
             case "user":
                 holder.last_msg.setText(user.getStatus());
                 break;

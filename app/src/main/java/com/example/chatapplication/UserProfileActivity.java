@@ -36,6 +36,8 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.chatapplication.GroupChatActivity.myRole;
+
 public class UserProfileActivity extends AppCompatActivity {
 
     public static final int IMAGE_REQUEST = 1;
@@ -61,7 +63,7 @@ public class UserProfileActivity extends AppCompatActivity {
         TextView status = findViewById(R.id.statusTextView);
         usernameEdit = findViewById(R.id.usernameEditText);
         statusEdit = findViewById(R.id.statusEditText);
-        Button profile_imageButton = findViewById(R.id.sendRequest);
+        Button profile_imageButton = findViewById(R.id.changeProfilePhoto);
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         assert fuser != null;
@@ -84,8 +86,15 @@ public class UserProfileActivity extends AppCompatActivity {
                 assert user != null;
                 username.setText(user.getName());
                 status.setText(user.getStatus());
-                usernameEdit.setText(user.getName());
-                statusEdit.setText(user.getStatus());
+                if (groupid == null || !myRole.equals("Member")) {
+                    usernameEdit.setText(user.getName());
+                    statusEdit.setText(user.getStatus());
+                } else {
+                    findViewById(R.id.full_name_profile).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.status_profile).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.changeProfilePhoto).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.updateProfile).setVisibility(View.INVISIBLE);
+                }
                 name = user.getName();
                 if (!user.getImageURL().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
@@ -219,6 +228,6 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     public void participants(View view) {
-        startActivity(new Intent(this,GroupAddParticipantsActivity.class));
+        startActivity(new Intent(this, GroupParticipantsListActivity.class));
     }
 }

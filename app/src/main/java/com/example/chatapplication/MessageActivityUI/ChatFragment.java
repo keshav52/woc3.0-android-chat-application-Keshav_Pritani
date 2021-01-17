@@ -90,7 +90,17 @@ public class ChatFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
                     assert user != null;
-                    mUsers.add(user);
+                    int da = -1;
+                    for (User ue : mUsers) {
+                        if (ue.getId().equals(user.getId())) {
+                            da = mUsers.indexOf(ue);
+                            mUsers.remove(ue);
+                            break;
+                        }
+                    }
+                    if (da == -1)
+                        mUsers.add(user);
+                    else mUsers.add(da,user);
                     userAdapter = new UserAdapter(getContext(), mUsers, "chat");
                     recyclerView.setAdapter(userAdapter);
                 }

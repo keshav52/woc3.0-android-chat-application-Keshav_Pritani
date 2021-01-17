@@ -32,6 +32,8 @@ public class GroupAddParticipantsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_add_participants);
 
         groupId1 = groupId;
+        Intent intent = getIntent();
+        ArrayList<String> u = intent.getStringArrayListExtra("list");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -45,15 +47,26 @@ public class GroupAddParticipantsActivity extends AppCompatActivity {
         lis = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mUsers.clear();
                 for (DataSnapshot s : snapshot.getChildren()) {
                     User user = s.getValue(User.class);
                     assert user != null;
-                    if (!user.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                    if (!user.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()) && !u.contains(user.getId())) {
                         FirebaseDatabase.getInstance().getReference("FriendsLists").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.hasChild(user.getId()) && Objects.requireNonNull(snapshot.child(user.getId()).child("status").getValue()).toString().equals("accepted")) {
-                                    mUsers.add(user);
+                                    int da = -1;
+                                    for (User ue : mUsers) {
+                                        if (ue.getId().equals(user.getId())) {
+                                            da = mUsers.indexOf(ue);
+                                            mUsers.remove(ue);
+                                            break;
+                                        }
+                                    }
+                                    if (da == -1)
+                                        mUsers.add(user);
+                                    else mUsers.add(da,user);
                                     UserAdapter userAdapter = new UserAdapter(GroupAddParticipantsActivity.this, mUsers, "participant");
                                     recyclerView.setAdapter(userAdapter);
                                 }
@@ -73,6 +86,7 @@ public class GroupAddParticipantsActivity extends AppCompatActivity {
 
             }
         };
+
         FirebaseDatabase.getInstance().getReference("Users").addValueEventListener(lis);
     }
 

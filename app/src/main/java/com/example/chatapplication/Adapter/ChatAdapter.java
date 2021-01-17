@@ -97,7 +97,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                             try {
                                 Glide.with(mContext).load(img).into(holder.profile_image);
                             } catch (Exception e) {
-                                Toast.makeText(mContext, "Error while Loading Profile picture", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "Error while Loading Profile picture" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                         holder.nameTextView.setText(Objects.requireNonNull(snapshot.child("name").getValue()).toString());

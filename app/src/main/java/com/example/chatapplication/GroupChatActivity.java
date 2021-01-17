@@ -109,7 +109,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 }
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
                 for (String u : users) {
-                    ref.child(u).addValueEventListener(new ValueEventListener() {
+                    ref.child(u).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             particiapants[0] += ", " + Objects.requireNonNull(snapshot.child("name").getValue()).toString();

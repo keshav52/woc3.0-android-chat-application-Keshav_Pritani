@@ -45,6 +45,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -157,6 +159,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
+                    assert chat != null;
                     if (chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid)) {
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("isseen", true);
@@ -221,6 +224,7 @@ public class ChatActivity extends AppCompatActivity {
                 mchats.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
+                    assert chat != null;
                     if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
                         mchats.add(chat);
@@ -258,12 +262,14 @@ public class ChatActivity extends AppCompatActivity {
                     Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username + ": " + message, "New Message",
                             userid);
 
+                    assert token != null;
                     Sender sender = new Sender(data, token.getToken());
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
-                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                public void onResponse(@NotNull Call<MyResponse> call, @NotNull Response<MyResponse> response) {
                                     if (response.code() == 200) {
+                                        assert response.body() != null;
                                         if (response.body().success != 1) {
                                             Toast.makeText(ChatActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                                         }
@@ -271,7 +277,7 @@ public class ChatActivity extends AppCompatActivity {
                                 }
 
                                 @Override
-                                public void onFailure(Call<MyResponse> call, Throwable t) {
+                                public void onFailure(@NotNull Call<MyResponse> call, @NotNull Throwable t) {
 
                                 }
                             });
