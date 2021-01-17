@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:background="@color/mainBackground"
         android:elevation="6dp"
         android:padding="20dp">
@@ -22,9 +22,9 @@
             android:layout_alignParentTop="true"
             android:background="?selectableItemBackground"
             android:onClick="backToHome"
+            android:src="@drawable/ic_arrow_back_black_24dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_arrow_back_black_24dp"
             tools:ignore="VectorDrawableCompat" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -79,17 +79,19 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:padding="20dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/full_name_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Full Name">
+            android:layout_marginTop="8dp"
+            android:hint="Full Name"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/usernameEditText"
@@ -105,16 +107,18 @@
             android:id="@+id/status_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Status">
+            android:hint="Status"
+            app:layout_constraintTop_toBottomOf="@+id/full_name_profile"
+            tools:layout_editor_absoluteX="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/statusEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine|textCapSentences"
                 android:layout_marginTop="20dp"
                 android:drawablePadding="10dp"
-                android:importantForAutofill="no" />
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapSentences" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -122,41 +126,53 @@
             android:id="@+id/updateProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:onClick="updateDetails"
             android:text="UPDATE"
             android:textColor="#090000"
-            app:backgroundTint="#FFC107" />
+            app:backgroundTint="#FFC107"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/status_profile" />
 
         <Button
             android:id="@+id/changeProfilePhoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:text="CHANGE PROFILE PHOTO"
             android:textColor="#090000"
-            app:backgroundTint="#FFC107" />
+            app:backgroundTint="#FFC107"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateProfile" />
 
         <Button
             android:id="@+id/participantsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:onClick="participants"
             android:text="Participants List"
             android:textColor="#090000"
             android:visibility="invisible"
-            app:backgroundTint="#FFC107" />
+            app:backgroundTint="#FFC107"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/changeProfilePhoto" />
 
         <Button
             android:id="@+id/leaveGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:onClick="leaveGroup"
             android:text="Leave Group"
             android:textColor="#090000"
             android:visibility="invisible"
-            app:backgroundTint="#FFC107" />
-    </LinearLayout>
+            app:backgroundTint="#FFC107"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/participantsList" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

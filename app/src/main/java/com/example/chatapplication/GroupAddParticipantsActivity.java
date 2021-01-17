@@ -55,7 +55,7 @@ public class GroupAddParticipantsActivity extends AppCompatActivity {
                 for (DataSnapshot s : snapshot.getChildren()) {
                     User user = s.getValue(User.class);
                     assert user != null;
-                    if (!user.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()) && !u.contains(user.getId())) {
+                    if (user.getId()!=null && !user.getId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()) && !u.contains(user.getId())) {
                         FirebaseDatabase.getInstance().getReference("FriendsLists").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
