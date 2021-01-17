@@ -3,6 +3,7 @@ package com.example.chatapplication;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -47,7 +48,6 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,11 +74,51 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ChatAdapter messageAdapter;
     List<Chat> mchats;
-    APIService apiService;
     boolean notify = false;
     ValueEventListener seenListener;
     private Uri imageUri;
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
+
+    public static void sendNotifiaction(String receiver, final String username, final String message, String title, String whatToOpen, String type, Context c) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(whatToOpen, R.mipmap.ic_launcher, username + message, title,
+                            receiver, type);
+                    APIService apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
+                    assert token != null;
+                    Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(@NotNull Call<MyResponse> call, @NotNull Response<MyResponse> response) {
+                                    if (response.code() == 200) {
+                                        assert response.body() != null;
+                                        if (response.body().success != 1) {
+                                            Toast.makeText(c, "Failed!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull Call<MyResponse> call, @NotNull Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +177,6 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         seenMessage(userid);
     }
 
@@ -202,7 +241,7 @@ public class ChatActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 if (notify) {
                     assert user != null;
-                    sendNotifiaction(receiver, user.getName(), msg);
+                    sendNotifiaction(receiver, user.getName(), ": " + msg, "New Message", fuser.getUid(), "chat", ChatActivity.this);
                 }
                 notify = false;
             }
@@ -251,46 +290,6 @@ public class ChatActivity extends AppCompatActivity {
         reference.updateChildren(hashMap);
     }
 
-    private void sendNotifiaction(String receiver, final String username, final String message) {
-        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = tokens.orderByKey().equalTo(receiver);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username + ": " + message, "New Message",
-                            userid);
-
-                    assert token != null;
-                    Sender sender = new Sender(data, token.getToken());
-                    apiService.sendNotification(sender)
-                            .enqueue(new Callback<MyResponse>() {
-                                @Override
-                                public void onResponse(@NotNull Call<MyResponse> call, @NotNull Response<MyResponse> response) {
-                                    if (response.code() == 200) {
-                                        assert response.body() != null;
-                                        if (response.body().success != 1) {
-                                            Toast.makeText(ChatActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(@NotNull Call<MyResponse> call, @NotNull Throwable t) {
-
-                                }
-                            });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     private void currentUser(String userid) {
         SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
         editor.putString("currentuser", userid);
@@ -324,7 +323,7 @@ public class ChatActivity extends AppCompatActivity {
         } else if (data != null && data.getData() != null && resultCode == RESULT_OK) {
             imageUri = data.getData();
             String type;
-            switch (requestCode ) {
+            switch (requestCode) {
                 case IMAGE_REQUEST:
                     type = "image";
                     break;
@@ -356,17 +355,13 @@ public class ChatActivity extends AppCompatActivity {
             if (which == 0) {
                 intent.setType("image/*");
                 startActivityForResult(intent, IMAGE_REQUEST);
-            }
-            else if (which == 1) {
+            } else if (which == 1) {
                 intent.setType("application/pdf");
                 startActivityForResult(intent, PDF_REQUEST);
-            }
-            else if (which == 2) {
+            } else if (which == 2) {
                 intent.setType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                 startActivityForResult(intent, WORD_REQUEST);
-            }
-            else if(which == 3)
-            {
+            } else if (which == 3) {
                 intent.setType("*/*");
                 startActivityForResult(intent, 0);
             }
@@ -398,7 +393,7 @@ public class ChatActivity extends AppCompatActivity {
 
         if (imageUri != null) {
             StorageReference storageReference = FirebaseStorage.getInstance().getReference("sendUploads");
-            final StorageReference fileReference = storageReference.child(queryName(this.getContentResolver(),imageUri) + "." + getFileExtension(imageUri));
+            final StorageReference fileReference = storageReference.child(queryName(this.getContentResolver(), imageUri) + "." + getFileExtension(imageUri));
 
             uploadTask = fileReference.putFile(imageUri);
             uploadTask.continueWithTask(task -> {

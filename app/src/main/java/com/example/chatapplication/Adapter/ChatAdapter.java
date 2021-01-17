@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -96,8 +95,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         if (!img.equals("default") && !img.isEmpty()) {
                             try {
                                 Glide.with(mContext).load(img).into(holder.profile_image);
-                            } catch (Exception e) {
-                                Toast.makeText(mContext, "Error while Loading Profile picture" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            } catch (Exception ignored) {
                             }
                         }
                         holder.nameTextView.setText(Objects.requireNonNull(snapshot.child("name").getValue()).toString());

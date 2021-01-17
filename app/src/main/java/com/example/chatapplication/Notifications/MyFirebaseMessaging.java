@@ -15,6 +15,9 @@ import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 
 import com.example.chatapplication.ChatActivity;
+import com.example.chatapplication.GroupChatActivity;
+import com.example.chatapplication.LoginActivity;
+import com.example.chatapplication.MessageActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -51,18 +54,30 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         }
     }
 
-    private void sendOreoNotification(RemoteMessage remoteMessage){
+    private void sendOreoNotification(RemoteMessage remoteMessage) {
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        String type = remoteMessage.getData().get("type");
 
         remoteMessage.getNotification();
         assert user != null;
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("userid", user);
+        Intent intent;
+        Class<ChatActivity> c = ChatActivity.class;
+        assert type != null;
+        if (type.equals("chat")) {
+            intent = new Intent(this, c);
+            bundle.putString("userid", user);
+        } else if (type.equals("group")) {
+            intent = new Intent(this, GroupChatActivity.class);
+            bundle.putString("groupid", user);
+        } else {
+            intent = new Intent(this, MessageActivity.class);
+            bundle.putString("tabIndex", user);
+        }
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -73,7 +88,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 defaultSound, icon);
 
         int i = 0;
-        if (j > 0){
+        if (j > 0) {
             i = j;
         }
 
@@ -87,13 +102,24 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        String type = remoteMessage.getData().get("type");
 
         remoteMessage.getNotification();
         assert user != null;
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("userid", user);
+        Intent intent;
+        Class<ChatActivity> c = ChatActivity.class;
+        assert type != null;
+        if (type.equals("chat")) {
+            intent = new Intent(this, c);
+            bundle.putString("userid", user);
+        } else if (type.equals("group")) {
+            intent = new Intent(this, GroupChatActivity.class);
+            bundle.putString("groupid", user);
+        } else {
+            intent = new Intent(this, LoginActivity.class);
+        }
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -107,10 +133,10 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setSound(defaultSound)
                 .setContentIntent(pendingIntent);
-        NotificationManager noti = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager noti = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         int i = 0;
-        if (j > 0){
+        if (j > 0) {
             i = j;
         }
 

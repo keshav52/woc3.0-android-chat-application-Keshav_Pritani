@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,17 +46,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.chatapplication.ChatActivity.PDF_REQUEST;
 import static com.example.chatapplication.ChatActivity.WORD_REQUEST;
+import static com.example.chatapplication.ChatActivity.sendNotifiaction;
 import static com.example.chatapplication.GroupAddParticipantsActivity.groupId1;
 import static com.example.chatapplication.UserProfileActivity.IMAGE_REQUEST;
 
 public class GroupChatActivity extends AppCompatActivity {
 
-    public static String groupId, myRole;
+    public static String groupId, myRole, myName,groupName;
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
     private Uri imageUri;
     private EditText text_send;
     private RecyclerView recyclerView;
     private FirebaseUser fuser;
+    private boolean notify;
+    private TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public class GroupChatActivity extends AppCompatActivity {
         toolbar.setDisplayShowHomeEnabled(true);
         toolbar.setTitle("");
 
-        TextView title = findViewById(R.id.groupTitle);
+        title = findViewById(R.id.groupTitle);
         TextView part = findViewById(R.id.participants);
         text_send = findViewById(R.id.messageBox);
 
@@ -96,6 +98,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 final String[] particiapants = {"You"};
                 part.setText(particiapants[0]);
                 title.setText(Objects.requireNonNull(dataSnapshot.child("name").getValue()).toString());
+                groupName = title.getText().toString();
                 CircleImageView groupIcon = findViewById(R.id.groupIcon);
                 String url = Objects.requireNonNull(dataSnapshot.child("imageURL").getValue()).toString();
                 if (!url.equals("default")) {
@@ -104,16 +107,22 @@ public class GroupChatActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.child("participants").getChildren()) {
                     if (!Objects.requireNonNull(snapshot.getKey()).equals(fuser.getUid()))
                         users.add(snapshot.getKey());
-                    else
+                    else {
+                        users.add(snapshot.getKey());
                         myRole = Objects.requireNonNull(snapshot.child("role").getValue()).toString();
+                    }
                 }
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
                 for (String u : users) {
                     ref.child(u).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            particiapants[0] += ", " + Objects.requireNonNull(snapshot.child("name").getValue()).toString();
-                            part.setText(particiapants[0]);
+                            if (Objects.requireNonNull(snapshot.child("id").getValue()).toString().equals(fuser.getUid())) {
+                                myName = Objects.requireNonNull(snapshot.child("name").getValue()).toString();
+                            } else {
+                                particiapants[0] += ", " + Objects.requireNonNull(snapshot.child("name").getValue()).toString();
+                                part.setText(particiapants[0]);
+                            }
                         }
 
                         @Override
@@ -133,7 +142,7 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
     public void sendBTNClicked(View view) {
-//        notify = true;
+        notify = true;
         String msg = text_send.getText().toString();
         if (!msg.equals("")) {
             sendMessage(fuser.getUid(), msg, "text");
@@ -156,16 +165,15 @@ public class GroupChatActivity extends AppCompatActivity {
         assert key != null;
         reference.child("Messages").child(key).setValue(hashMap);
 
-//        final String msg = message;
+        final String msg = message;
         reference.child("lastSeen").setValue(key);
-        /*reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.child("participants").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if (notify) {
-                    assert user != null;
-                    sendNotifiaction(receiver, user.getName(), msg);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (!fuser.getUid().equals(snapshot.getKey()) && notify) {
+                        sendNotifiaction(snapshot.getKey(), title.getText().toString() + ": " + myName, ": " + msg, "New Group Message", groupId, "group", GroupChatActivity.this);
+                    }
                 }
                 notify = false;
             }
@@ -174,7 +182,7 @@ public class GroupChatActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });*/
+        });
     }
 
     private void readMesagges(final String groupId) {
@@ -227,7 +235,6 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
     public void addFiles(View view) {
-        ImageButton btn = findViewById(R.id.addFileImageView);
         CharSequence[] type = new CharSequence[]{
                 "Images", "PDFs", "MS Word Files", "Any Other Type"
         };
@@ -308,7 +315,6 @@ public class GroupChatActivity extends AppCompatActivity {
             Toast.makeText(this, "No File selected", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

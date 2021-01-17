@@ -39,7 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.chatapplication.ChatActivity.sendNotifiaction;
 import static com.example.chatapplication.GroupChatActivity.groupId;
+import static com.example.chatapplication.GroupChatActivity.groupName;
 import static com.example.chatapplication.GroupChatActivity.myRole;
 
 
@@ -152,6 +154,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                                     removeParticipant(snapshot.getKey());
                                                 }
                                             }).show();
+                                        } else if (role.equals("Creator")) {
+                                            Toast.makeText(mContext, "You cannot modify the role of the Creator", Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 } else {
@@ -164,7 +168,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                             private void makeAdmin(String key) {
                                 commonRef.child(key).child("role").setValue("Admin")
-                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, user.getName() + " is now Admin", Toast.LENGTH_SHORT).show())
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(mContext, user.getName() + " is now Admin", Toast.LENGTH_SHORT).show();
+                                            sendNotifiaction(key, "You are now admin of this group", "", groupName, groupId, "group", mContext);
+                                        })
                                         .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
                             }
 
@@ -173,19 +180,28 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                 participant.put("role", "Member");
                                 participant.put("joined on", new Date().toLocaleString());
                                 commonRef.child(key).setValue(participant)
-                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, "User Added to the Group as a Member", Toast.LENGTH_LONG).show())
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(mContext, "User Added to the Group as a Member", Toast.LENGTH_LONG).show();
+                                            sendNotifiaction(key, "You were add to a new Group", "", groupName, groupId, "group", mContext);
+                                        })
                                         .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
                             }
 
                             private void removeParticipant(String key) {
                                 commonRef.child(key).removeValue()
-                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, user.getName() + " is removed from the Group", Toast.LENGTH_SHORT).show())
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(mContext, user.getName() + " is removed from the Group", Toast.LENGTH_SHORT).show();
+                                            sendNotifiaction(key, "You were removed from this Group", "", groupName, "1", "home", mContext);
+                                        })
                                         .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
                             }
 
                             private void removeAdminRights(String key) {
                                 commonRef.child(key).child("role").setValue("Member")
-                                        .addOnSuccessListener(aVoid -> Toast.makeText(mContext, user.getName() + "'s Admin rights were Removed", Toast.LENGTH_SHORT).show())
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(mContext, user.getName() + "'s Admin rights were Removed", Toast.LENGTH_SHORT).show();
+                                            sendNotifiaction(key, "Your Admin rights were removed", "", groupName, groupId, "group", mContext);
+                                        })
                                         .addOnFailureListener(e -> Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show());
                             }
 
@@ -237,68 +253,73 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                DatabaseReference reference = ref.child("Messages").child(Objects.requireNonNull(snapshot.child("lastSeen").getValue()).toString());
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Chat chat = dataSnapshot.getValue(Chat.class);
-                        assert chat != null;
-                        FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                theLastMessage = "";
-                                if (chat.getSender().equals(firebaseUser.getUid()))
-                                    theLastMessage += "You: ";
-                                else {
-                                    theLastMessage += Objects.requireNonNull(snapshot.child("name").getValue()).toString() + ": ";
-                                }
-                                if (chat.getType().equals("text"))
-                                    theLastMessage += chat.getMessage();
-                                else {
-                                    theLastMessage += "Sent ";
-                                    if (chat.getType().equals("image")) theLastMessage += "an ";
-                                    else theLastMessage += "a ";
-                                    theLastMessage += chat.getType();
-                                    if (!chat.getType().equals("image"))
-                                        theLastMessage += " document";
-                                }
-                                d[0] = chat.getTime();
-
-                                if (!theLastMessage.equals("default")) {
-                                    last_msg.setText(theLastMessage);
-                                    if (d[0] != null) {
-                                        Date current = new Date();
-                                        DateFormat smf = SimpleDateFormat.getDateInstance();
-                                        String last = smf.format(d[0]);
-                                        if (smf.format(d[0]).equals(smf.format(current))) {
-                                            smf = SimpleDateFormat.getTimeInstance();
-                                            last = smf.format(d[0]);
+                if (!Objects.requireNonNull(snapshot.child("lastSeen").getValue()).toString().equals("")) {
+                    DatabaseReference reference = ref.child("Messages").child(Objects.requireNonNull(snapshot.child("lastSeen").getValue()).toString());
+                    reference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Chat chat = dataSnapshot.getValue(Chat.class);
+                            if (chat != null) {
+                                FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        theLastMessage = "";
+                                        if (chat.getSender().equals(firebaseUser.getUid()))
+                                            theLastMessage += "You: ";
+                                        else {
+                                            theLastMessage += Objects.requireNonNull(snapshot.child("name").getValue()).toString() + ": ";
                                         }
-                                        lastTime.setText(last);
+                                        if (chat.getType().equals("text"))
+                                            theLastMessage += chat.getMessage();
+                                        else {
+                                            theLastMessage += "Sent ";
+                                            if (chat.getType().equals("image"))
+                                                theLastMessage += "an ";
+                                            else theLastMessage += "a ";
+                                            theLastMessage += chat.getType();
+                                            if (!chat.getType().equals("image"))
+                                                theLastMessage += " document";
+                                        }
+                                        d[0] = chat.getTime();
+
+                                        if (!theLastMessage.equals("default")) {
+                                            last_msg.setText(theLastMessage);
+                                            if (d[0] != null) {
+                                                Date current = new Date();
+                                                DateFormat smf = SimpleDateFormat.getDateInstance();
+                                                String last = smf.format(d[0]);
+                                                if (smf.format(d[0]).equals(smf.format(current))) {
+                                                    smf = SimpleDateFormat.getTimeInstance();
+                                                    last = smf.format(d[0]);
+                                                }
+                                                lastTime.setText(last);
+                                            }
+                                            theLastMessage = "default";
+                                        }
                                     }
-                                    theLastMessage = "default";
-                                }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
-                    }
+                                    }
+                                });
+                            } else
+                                reference.removeEventListener(this);
+                        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
+                        }
 
-                });
+                    });
+                }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
+
         });
     }
 

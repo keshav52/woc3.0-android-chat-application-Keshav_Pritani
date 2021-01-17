@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.chatapplication.ChatActivity.sendNotifiaction;
+import static com.example.chatapplication.MessageActivity.USERNAME;
+
 public class ShowProfileActivity extends AppCompatActivity {
 
     private String userId;
@@ -35,6 +39,7 @@ public class ShowProfileActivity extends AppCompatActivity {
     private FirebaseUser fuser;
     private DatabaseReference friendsListsRef;
     private Button request;
+    private TextView username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,7 @@ public class ShowProfileActivity extends AppCompatActivity {
 
         userId = getIntent().getExtras().get("userId").toString();
         CircleImageView profile_image = findViewById(R.id.profile_image);
-        TextView username = findViewById(R.id.usernameTextView);
+        username = findViewById(R.id.usernameTextView);
         TextView s = findViewById(R.id.statusTextView);
         request = findViewById(R.id.sendRequest);
 
@@ -75,24 +80,50 @@ public class ShowProfileActivity extends AppCompatActivity {
                 @SuppressLint("SetTextI18n")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    request.setVisibility(View.VISIBLE);
+                    findViewById(R.id.requestStatus).setVisibility(View.GONE);
+                    findViewById(R.id.acceptRequest).setVisibility(View.GONE);
+                    findViewById(R.id.declineRequest).setVisibility(View.GONE);
+                    findViewById(R.id.removeFriend).setVisibility(View.GONE);
                     if (snapshot.hasChild(userId)) {
                         if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("sent")) {
                             status = "sent";
                             request.setText("Cancel Request");
                         } else if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("rejected")) {
                             status = "rejected";
+                            request.setVisibility(View.GONE);
                             TextView r = findViewById(R.id.requestStatus);
                             r.setVisibility(View.VISIBLE);
                             r.setText("Your Request was Rejected.");
-                            request.setVisibility(View.GONE);
-//                            request.setEnabled(false);
                         } else if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("accepted")) {
                             status = "accepted";
+                            request.setVisibility(View.GONE);
                             TextView r = findViewById(R.id.requestStatus);
                             r.setVisibility(View.VISIBLE);
                             r.setText("Your Request was Accepted.");
+                            Button remove = findViewById(R.id.removeFriend);
+                            remove.setVisibility(View.VISIBLE);
+                            remove.setOnClickListener(v -> friendsListsRef.child(fuser.getUid()).child(userId).removeValue().addOnCompleteListener(task -> friendsListsRef.child(userId).child(fuser.getUid()).removeValue().addOnCompleteListener(task1 -> {
+                                request.setVisibility(View.VISIBLE);
+                                findViewById(R.id.requestStatus).setVisibility(View.GONE);
+                                findViewById(R.id.acceptRequest).setVisibility(View.GONE);
+                                findViewById(R.id.declineRequest).setVisibility(View.GONE);
+                                findViewById(R.id.removeFriend).setVisibility(View.GONE);
+                                request.setText("Send Request");
+                                status ="new";
+                                Toast.makeText(ShowProfileActivity.this, "Friend Removed", Toast.LENGTH_LONG).show();
+                            })));
+                        } else if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("received")) {
+                            status = "received";
                             request.setVisibility(View.GONE);
-//                            request.setEnabled(false);
+                            Button ac = findViewById(R.id.acceptRequest);
+                            Button dec = findViewById(R.id.declineRequest);
+                            ac.setVisibility(View.VISIBLE);
+                            dec.setVisibility(View.VISIBLE);
+
+                            ac.setOnClickListener(v -> friendsListsRef.child(fuser.getUid()).child(userId).child("status").setValue("accepted").addOnCompleteListener(task -> friendsListsRef.child(userId).child(fuser.getUid()).child("status").setValue("accepted").addOnCompleteListener(task2 -> Toast.makeText(ShowProfileActivity.this, "Friend Added", Toast.LENGTH_LONG).show())));
+                            dec.setOnClickListener(v -> friendsListsRef.child(fuser.getUid()).child(userId).child("status").setValue("rejected").addOnCompleteListener(task -> friendsListsRef.child(userId).child(fuser.getUid()).removeValue().addOnCompleteListener(task1 -> Toast.makeText(ShowProfileActivity.this, "Request Cancelled", Toast.LENGTH_LONG).show())));
+
                         }
                     }
                 }
@@ -164,6 +195,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                                             request.setText("Cancel Request");
                                             status = "sent";
                                             request.setEnabled(true);
+                                            sendNotifiaction(userId, USERNAME, ": wants to connect to you", "New Friend Request", "3", "home", this);
                                         }));
             else request.setEnabled(true);
         }, 3000);

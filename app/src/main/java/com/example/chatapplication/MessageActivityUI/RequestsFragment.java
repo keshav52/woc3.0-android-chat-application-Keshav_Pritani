@@ -44,6 +44,7 @@ public class RequestsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
 
         usersRef = FirebaseDatabase.getInstance().getReference("Users");
+        assert fuser != null;
         DatabaseReference friendsListsRef = FirebaseDatabase.getInstance().getReference("FriendsLists").child(fuser.getUid());
         ArrayList<User> mUsers = new ArrayList<>();
         ArrayList<String> u = new ArrayList<>();

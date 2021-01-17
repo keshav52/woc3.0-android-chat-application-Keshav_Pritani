@@ -1,5 +1,6 @@
 package com.example.chatapplication;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.chatapplication.GroupChatActivity.groupId;
 import static com.example.chatapplication.GroupChatActivity.myRole;
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -80,20 +82,27 @@ public class UserProfileActivity extends AppCompatActivity {
             name = fuser.getUid();
         }
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 assert user != null;
                 username.setText(user.getName());
                 status.setText(user.getStatus());
+                if (groupid != null) {
+                    TextView temp = findViewById(R.id.createdTextView);
+                    findViewById(R.id.leaveGroup).setVisibility(View.VISIBLE);
+                    temp.setVisibility(View.VISIBLE);
+                    temp.setText("Created on " + Objects.requireNonNull(dataSnapshot.child("created on").getValue()).toString());
+                }
                 if (groupid == null || !myRole.equals("Member")) {
                     usernameEdit.setText(user.getName());
                     statusEdit.setText(user.getStatus());
                 } else {
-                    findViewById(R.id.full_name_profile).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.status_profile).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.changeProfilePhoto).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.updateProfile).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.full_name_profile).setVisibility(View.GONE);
+                    findViewById(R.id.status_profile).setVisibility(View.GONE);
+                    findViewById(R.id.changeProfilePhoto).setVisibility(View.GONE);
+                    findViewById(R.id.updateProfile).setVisibility(View.GONE);
                 }
                 name = user.getName();
                 if (!user.getImageURL().equals("default")) {
@@ -196,7 +205,7 @@ public class UserProfileActivity extends AppCompatActivity {
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Updating");
         pd.show();
-        new Handler().postDelayed((Runnable) () -> {
+        new Handler().postDelayed(() -> {
             pd.dismiss();
             Toast.makeText(this, "Updated", Toast.LENGTH_LONG).show();
         }, 2000);
@@ -229,5 +238,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void participants(View view) {
         startActivity(new Intent(this, GroupParticipantsListActivity.class));
+    }
+
+    public void leaveGroup(View view) {
+        FirebaseDatabase.getInstance().getReference("Groups").child(groupId).child("participants").child(fuser.getUid()).removeValue()
+                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Group Left", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show());
+        startActivity(new Intent(this,MessageActivity.class));
+        this.finish();
     }
 }

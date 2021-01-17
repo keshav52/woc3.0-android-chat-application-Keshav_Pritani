@@ -33,7 +33,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_person_241" />
+            android:src="@drawable/ic_baseline_person_241"
+            tools:ignore="VectorDrawableCompat" />
 
         <TextView
             android:id="@+id/usernameTextView"
@@ -89,6 +90,33 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/acceptRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Accept Request"
+            android:visibility="gone"
+            app:backgroundTint="#FFC107" />
+
+        <Button
+            android:id="@+id/declineRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Decline Request"
+            android:visibility="gone"
+            app:backgroundTint="#FFC107" />
+
+        <Button
+            android:id="@+id/removeFriend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Remove Friend"
+            android:visibility="gone"
+            app:backgroundTint="#FFC107" />
 
     </LinearLayout>
 </LinearLayout>
