@@ -75,14 +75,38 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.msgTime2.setVisibility(View.VISIBLE);
             holder.msgTime.setVisibility(View.GONE);
             holder.msgTime2.setText(chat.getTime().getHours() + ":" + chat.getTime().getMinutes());
-            if (type.equals("image")) {
-                Glide.with(mContext).load(chat.getMessage()).into(holder.imageView);
-            } else
-                holder.imageView.setImageResource(R.mipmap.ic_launcher);
+            holder.imageType.setVisibility(View.VISIBLE);
+            String first = type.substring(0,1);
+            String remaining = type.substring(1);
+            holder.imageType.setText(first.toUpperCase() + remaining);
+            switch (type) {
+                case "image":
+                    holder.imageType.setVisibility(View.GONE);
+                    Glide.with(mContext).load(chat.getMessage()).into(holder.imageView);
+                    break;
+                case "pdf":
+                    holder.imageView.setImageResource(R.drawable.pdf_image);
+                    break;
+                case "word":
+                    holder.imageView.setImageResource(R.drawable.doc_image);
+                    break;
+                case "location":
+                    holder.imageView.setImageResource(R.drawable.location_image);
+                    break;
+                default:
+                    holder.imageView.setImageResource(R.drawable.other_file_image);
+            }
 
             holder.imageView.setOnClickListener(v -> {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(chat.getMessage()));
-                holder.imageView.getContext().startActivity(intent);
+                if (!chat.getType().equals("location")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(chat.getMessage()));
+                    holder.imageView.getContext().startActivity(intent);
+                } else {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse("geo:" + chat.getMessage()));
+                    Intent chooser = Intent.createChooser(i, "Launch Maps");
+                    holder.itemView.getContext().startActivity(chooser);
+                }
             });
         }
         if (viewType == MSG_TYPE_LEFT) {
@@ -160,7 +184,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView nameTextView, show_message, seenStatusText, imageSeenStatusText, msgTime, msgTime2;
+        public TextView nameTextView, show_message, seenStatusText, imageSeenStatusText, msgTime, msgTime2,imageType;
         public ImageView profile_image, seenStatus, imageView, imageSeenStatus;
 
         public ViewHolder(View itemView) {
@@ -176,6 +200,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             imageView = itemView.findViewById(R.id.imageView);
             imageSeenStatusText = itemView.findViewById(R.id.imageSeenStatusText);
             imageSeenStatus = itemView.findViewById(R.id.imageSeenStatus);
+            imageType = itemView.findViewById(R.id.imageText);
         }
 
     }

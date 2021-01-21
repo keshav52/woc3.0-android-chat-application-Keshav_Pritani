@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,6 +65,8 @@ public class RequestsFragment extends Fragment {
                 view.findViewById(R.id.mailBoxImage).setVisibility(View.INVISIBLE);
                 view.findViewById(R.id.emptyTextView).setVisibility(View.INVISIBLE);
                 if (u.size() == 0) {
+                    ImageView image = view.findViewById(R.id.mailBoxImage);
+                    image.setImageResource(R.drawable.ic_baseline_emoji_emotions_24);
                     view.findViewById(R.id.mailBoxImage).setVisibility(View.VISIBLE);
                     view.findViewById(R.id.emptyTextView).setVisibility(View.VISIBLE);
                 }
@@ -73,7 +76,18 @@ public class RequestsFragment extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             User user = snapshot.getValue(User.class);
-                            mUsers.add(user);
+                            int da = -1;
+                            assert user != null;
+                            for (User ue : mUsers) {
+                                if (ue.getId().equals(user.getId())) {
+                                    da = mUsers.indexOf(ue);
+                                    mUsers.remove(ue);
+                                    break;
+                                }
+                            }
+                            if (da == -1)
+                                mUsers.add(user);
+                            else mUsers.add(da, user);
                             flag[0] = true;
                             UserAdapter userAdapter = new UserAdapter(getContext(), mUsers, "request");
                             recyclerView.setAdapter(userAdapter);

@@ -1,12 +1,20 @@
 package com.example.chatapplication;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +27,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapplication.Adapter.ChatAdapter;
 import com.example.chatapplication.Model.Chat;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -236,7 +251,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     public void addFiles(View view) {
         CharSequence[] type = new CharSequence[]{
-                "Images", "PDFs", "MS Word Files", "Any Other Type"
+                "Images", "PDFs", "MS Word Files", "Any Other Type", "Share Location"
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -257,9 +272,51 @@ public class GroupChatActivity extends AppCompatActivity {
             } else if (which == 3) {
                 intent.setType("*/*");
                 startActivityForResult(intent, 0);
+            } else if (which == 4) {
+                shareLocation();
             }
         });
         builder.show();
+    }
+
+    private void shareLocation() {
+        LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("Enable Location").setMessage("Your Loction Service is OFF.\nPlease ON to share the location.")
+                    .setPositiveButton("Location Settings", (dialog12, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("Cancel", (dialog1, which) -> {
+
+                    }).show();
+        } else {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Shraing Location");
+            pd.show();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+                    final Location[] location = {task.getResult()};
+                    LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(10000).setFastestInterval(1000).setNumUpdates(1);
+                    LocationCallback locationCallback = new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            location[0] = locationResult.getLastLocation();
+                            pd.dismiss();
+                            sendMessage(fuser.getUid(), location[0].getLatitude() + "," + location[0].getLongitude(), "location");
+                        }
+
+                        @Override
+                        public void onLocationAvailability(LocationAvailability locationAvailability) {
+                            super.onLocationAvailability(locationAvailability);
+                        }
+                    };
+                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+
+                });
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            }
+        }
     }
 
     private String getFileExtension(Uri uri) {
@@ -332,6 +389,11 @@ public class GroupChatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void currentUser(String userid) {
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
+    }
 
     private void status(String status) {
         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
@@ -346,12 +408,14 @@ public class GroupChatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         status("");
+        currentUser(groupId);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         status(new Date().toLocaleString());
+        currentUser("none");
     }
 
 }

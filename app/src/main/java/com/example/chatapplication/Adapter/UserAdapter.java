@@ -277,7 +277,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                                 theLastMessage += "an ";
                                             else theLastMessage += "a ";
                                             theLastMessage += chat.getType();
-                                            if (!chat.getType().equals("image"))
+                                            if (!chat.getType().equals("image") && !chat.getType().equals("location"))
                                                 theLastMessage += " document";
                                         }
                                         d[0] = chat.getTime();
@@ -359,7 +359,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                     if (chat.getType().equals("image")) theLastMessage += "an ";
                                     else theLastMessage += "a ";
                                     theLastMessage += chat.getType();
-                                    if (!chat.getType().equals("image"))
+                                    if (!chat.getType().equals("image") && !chat.getType().equals("location"))
                                         theLastMessage += " document";
                                 }
                                 d[0] = chat.getTime();

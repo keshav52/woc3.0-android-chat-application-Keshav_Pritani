@@ -1,15 +1,21 @@
 package com.example.chatapplication;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -19,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +39,12 @@ import com.example.chatapplication.Notifications.Data;
 import com.example.chatapplication.Notifications.MyResponse;
 import com.example.chatapplication.Notifications.Sender;
 import com.example.chatapplication.Notifications.Token;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -63,6 +76,7 @@ import retrofit2.Response;
 public class ChatActivity extends AppCompatActivity {
 
     public static final int IMAGE_REQUEST = 101, PDF_REQUEST = 102, WORD_REQUEST = 103;
+    FusedLocationProviderClient fusedLocationProviderClient;
     CircleImageView profile_image;
     TextView username;
     FirebaseUser fuser;
@@ -123,6 +137,9 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         intent = getIntent();
         userid = intent.getStringExtra("userid");
@@ -341,7 +358,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public void addFiles(View view) {
         CharSequence[] type = new CharSequence[]{
-                "Images", "PDFs", "MS Word Files", "Any Other Type"
+                "Images", "PDFs", "MS Word Files", "Any Other Type", "Share Location"
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -362,9 +379,51 @@ public class ChatActivity extends AppCompatActivity {
             } else if (which == 3) {
                 intent.setType("*/*");
                 startActivityForResult(intent, 0);
+            } else if (which == 4) {
+                shareLocation();
             }
         });
         builder.show();
+    }
+
+    private void shareLocation() {
+        LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("Enable Location").setMessage("Your Loction Service is OFF.\nPlease ON to share the location.")
+                    .setPositiveButton("Location Settings", (dialog12, which) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("Cancel", (dialog1, which) -> {
+
+                    }).show();
+        }
+        else {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Shraing Location");
+            pd.show();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+                    final Location[] location = {task.getResult()};
+                    LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(10000).setFastestInterval(1000).setNumUpdates(1);
+                    LocationCallback locationCallback = new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            location[0] = locationResult.getLastLocation();
+                            pd.dismiss();
+                            sendMessage(fuser.getUid(), userid, location[0].getLatitude() + "," + location[0].getLongitude(), "location");
+                        }
+
+                        @Override
+                        public void onLocationAvailability(LocationAvailability locationAvailability) {
+                            super.onLocationAvailability(locationAvailability);
+                        }
+                    };
+                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+
+                });
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            }
+        }
     }
 
     private String getFileExtension(Uri uri) {
