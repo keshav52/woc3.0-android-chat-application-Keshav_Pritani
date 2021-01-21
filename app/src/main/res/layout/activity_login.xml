@@ -53,7 +53,7 @@
         android:ems="10"
         android:focusable="true"
         android:hint="Enter your Phone Number"
-        android:inputType="numberSigned|phone"
+        android:inputType="numberSigned|phone|textNoSuggestions"
         android:padding="16sp"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/signBT"
@@ -147,89 +147,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--<EditText
-        android:id="@+id/nameTextBox"
-        android:layout_width="340dp"
-        android:layout_height="71dp"
-        android:layout_marginStart="99dp"
-        android:layout_marginLeft="99dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="103dp"
-        android:layout_marginRight="103dp"
-        android:autofillHints=""
-        android:background="@drawable/round_text_box"
-        android:drawableStart="@drawable/ic_baseline_lock_24"
-        android:drawableLeft="@drawable/ic_baseline_lock_24"
-        android:drawablePadding="16sp"
-        android:ems="10"
-        android:hint="@string/enter_your_password"
-        android:inputType="textPassword"
-        android:padding="16sp"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneTextBox" />-->
-    <!--<TextView
-        android:id="@+id/signInTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="104dp"
-        android:fontFamily="@font/autour_one"
-        android:text="@string/sign_in"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/loginBtn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextBox" />
--->
-    <!--<ImageView
-        android:id="@+id/loginBtn"
-        android:layout_width="86dp"
-        android:layout_height="89dp"
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:contentDescription="@string/todo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextBox"
-        app:srcCompat="@drawable/ic_action_name" />
--->
-    <!--<TextView
-        android:id="@+id/signInTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:fontFamily="@font/autour_one"
-        android:text="@string/forgot_password"
-        android:textColor="#F6A874"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBaseline_toBaselineOf="@+id/signInTextView3"
-        app:layout_constraintStart_toEndOf="@+id/signInTextView3" />
--->
-    <!--
-    <TextView
-        android:id="@+id/signInTextView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:fontFamily="@font/autour_one"
-        android:onClick="register"
-        android:text="@string/sign_up"
-        android:textColor="#F6A874"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signInTextView"
-        app:layout_constraintVertical_bias="0.578" />
--->
 </androidx.constraintlayout.widget.ConstraintLayout>

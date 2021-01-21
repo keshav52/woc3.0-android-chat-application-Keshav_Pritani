@@ -28,6 +28,7 @@ public class GroupsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ArrayList<User> mUsers;
+    private View view;
 
     public static GroupsFragment getInstance() {
         return new GroupsFragment();
@@ -38,7 +39,7 @@ public class GroupsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_user, container, false);
+        view = inflater.inflate(R.layout.fragment_user, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -64,8 +65,14 @@ public class GroupsFragment extends Fragment {
                         mUsers.add(user);
                     }
                 }
+                view.findViewById(R.id.mailBoxImage).setVisibility(View.INVISIBLE);
+                view.findViewById(R.id.emptyTextView).setVisibility(View.INVISIBLE);
                 UserAdapter userAdapter = new UserAdapter(getContext(), mUsers, "group");
                 recyclerView.setAdapter(userAdapter);
+                if (mUsers.size() == 0) {
+                    view.findViewById(R.id.mailBoxImage).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.emptyTextView).setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
