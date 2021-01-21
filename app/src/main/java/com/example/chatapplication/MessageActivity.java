@@ -3,7 +3,6 @@ package com.example.chatapplication;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -109,6 +108,9 @@ public class MessageActivity extends AppCompatActivity {
 
             case R.id.createGroupItem:
                 startActivity(new Intent(this, CreateGroupActivity.class));
+                break;
+            case R.id.impMessages:
+                startActivity(new Intent(this,ImportantMessageActivity.class));
                 break;
         }
         return true;

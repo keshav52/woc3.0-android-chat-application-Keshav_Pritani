@@ -11,6 +11,17 @@ public class Chat {
     private boolean isseen;
     private String type;
 
+    public Chat() {
+    }
+
+    public Chat(String sender, String receiver, String message, Date time, String type) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.time = time;
+        this.type = type;
+    }
+
     public String getType() {
         return type;
     }

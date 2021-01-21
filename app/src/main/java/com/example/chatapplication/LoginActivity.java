@@ -165,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
                                             .setActivity(LoginActivity.this)                 // Activity (for callback binding)
                                             .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                                             .build();
+//                            startActivity(new Intent(LoginActivity.this, MessageActivity.class));
                             PhoneAuthProvider.verifyPhoneNumber(options);
                             btn_signIn.setText("Verify");
                             registerBtn.setVisibility(View.GONE);

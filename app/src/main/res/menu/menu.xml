@@ -19,6 +19,9 @@
         android:title="Profile" />
 
     <item
+        android:id="@+id/impMessages"
+        android:title="Important Messages" />
+    <item
         android:id="@+id/findUser"
         android:title="Find Users" />
     <item
