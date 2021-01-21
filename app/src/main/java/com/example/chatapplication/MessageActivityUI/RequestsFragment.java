@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapplication.Adapter.UserAdapter;
@@ -42,6 +43,8 @@ public class RequestsFragment extends Fragment {
 
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         usersRef = FirebaseDatabase.getInstance().getReference("Users");
         assert fuser != null;
@@ -57,6 +60,12 @@ public class RequestsFragment extends Fragment {
                     if (Objects.requireNonNull(snapshot.child("status").getValue()).toString().equals("received")) {
                         u.add(snapshot.getKey());
                     }
+                }
+                view.findViewById(R.id.mailBoxImage).setVisibility(View.INVISIBLE);
+                view.findViewById(R.id.emptyTextView).setVisibility(View.INVISIBLE);
+                if (u.size() == 0) {
+                    view.findViewById(R.id.mailBoxImage).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.emptyTextView).setVisibility(View.VISIBLE);
                 }
                 final boolean[] flag = {false};
                 for (String u1 : u) {

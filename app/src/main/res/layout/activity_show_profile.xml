@@ -92,7 +92,7 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/acceptRequest"
+            android:id="@+id/acceptRequest1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -102,7 +102,7 @@
             app:backgroundTint="#FFC107" />
 
         <Button
-            android:id="@+id/declineRequest"
+            android:id="@+id/declineRequest1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"

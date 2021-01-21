@@ -57,6 +57,7 @@ public class ChatFragment extends Fragment {
 
         usersList = new HashSet<>();
 
+        final boolean[] flag = {false};
         reference = FirebaseDatabase.getInstance().getReference("ChatsLists").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -64,8 +65,15 @@ public class ChatFragment extends Fragment {
                 usersList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     usersList.add(snapshot.getKey());
+                    flag[0] = true;
                 }
                 readChats();
+                view.findViewById(R.id.mailBoxImage).setVisibility(View.INVISIBLE);
+                view.findViewById(R.id.emptyTextView).setVisibility(View.INVISIBLE);
+                if (!flag[0]) {
+                    view.findViewById(R.id.mailBoxImage).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.emptyTextView).setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

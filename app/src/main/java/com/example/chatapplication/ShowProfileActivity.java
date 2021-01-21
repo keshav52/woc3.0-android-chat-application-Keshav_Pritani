@@ -84,8 +84,8 @@ public class ShowProfileActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     request.setVisibility(View.VISIBLE);
                     findViewById(R.id.requestStatus).setVisibility(View.GONE);
-                    findViewById(R.id.acceptRequest).setVisibility(View.GONE);
-                    findViewById(R.id.declineRequest).setVisibility(View.GONE);
+                    findViewById(R.id.acceptRequest1).setVisibility(View.GONE);
+                    findViewById(R.id.declineRequest1).setVisibility(View.GONE);
                     findViewById(R.id.removeFriend).setVisibility(View.GONE);
                     if (snapshot.hasChild(userId)) {
                         if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("sent")) {
@@ -108,8 +108,8 @@ public class ShowProfileActivity extends AppCompatActivity {
                             remove.setOnClickListener(v -> friendsListsRef.child(fuser.getUid()).child(userId).removeValue().addOnCompleteListener(task -> friendsListsRef.child(userId).child(fuser.getUid()).removeValue().addOnCompleteListener(task1 -> {
                                 request.setVisibility(View.VISIBLE);
                                 findViewById(R.id.requestStatus).setVisibility(View.GONE);
-                                findViewById(R.id.acceptRequest).setVisibility(View.GONE);
-                                findViewById(R.id.declineRequest).setVisibility(View.GONE);
+                                findViewById(R.id.acceptRequest1).setVisibility(View.GONE);
+                                findViewById(R.id.declineRequest1).setVisibility(View.GONE);
                                 findViewById(R.id.removeFriend).setVisibility(View.GONE);
                                 request.setText("Send Request");
                                 status = "new";
@@ -118,8 +118,8 @@ public class ShowProfileActivity extends AppCompatActivity {
                         } else if (Objects.requireNonNull(snapshot.child(userId).child("status").getValue()).toString().equals("received")) {
                             status = "received";
                             request.setVisibility(View.GONE);
-                            Button ac = findViewById(R.id.acceptRequest);
-                            Button dec = findViewById(R.id.declineRequest);
+                            Button ac = findViewById(R.id.acceptRequest1);
+                            Button dec = findViewById(R.id.declineRequest1);
                             ac.setVisibility(View.VISIBLE);
                             dec.setVisibility(View.VISIBLE);
 

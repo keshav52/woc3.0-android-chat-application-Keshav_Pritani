@@ -119,7 +119,7 @@ public class MessageActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem item = menu.getItem(0);
 
-        if (prefs.getString("modeState", "dark").equals("dark")) {
+        if (prefs.getString("modeState", "light").equals("dark")) {
             item.setTitle("Switch to Light Theme");
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {

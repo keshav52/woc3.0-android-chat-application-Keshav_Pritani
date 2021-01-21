@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.chatapplication.Adapter.ChatAdapter;
 import com.example.chatapplication.Model.Chat;
+import com.example.chatapplication.Model.DatabaseHelper;
 import com.example.chatapplication.Model.User;
 import com.example.chatapplication.Notifications.APIService;
 import com.example.chatapplication.Notifications.Client;
@@ -62,6 +63,7 @@ import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
 
+    DatabaseHelper databaseHelper;
     public static final int IMAGE_REQUEST = 101, PDF_REQUEST = 102, WORD_REQUEST = 103;
     CircleImageView profile_image;
     TextView username;
