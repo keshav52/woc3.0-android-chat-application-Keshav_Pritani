@@ -27,12 +27,12 @@
             android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="12dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginRight="14dp"
             android:text="Name"
             android:textColor="@color/black"
             android:visibility="gone" />
@@ -138,7 +138,7 @@
         android:layout_toStartOf="@+id/seenStatus"
         android:layout_toLeftOf="@+id/seenStatus"
         android:text="Delivered"
-        android:textColor="@color/black"
+        android:textColor="@color/mainText"
         android:textSize="11sp"
         android:visibility="gone" />
 
@@ -153,7 +153,7 @@
         android:layout_toStartOf="@+id/imageSeenStatus"
         android:layout_toLeftOf="@+id/imageSeenStatus"
         android:text="Delivered"
-        android:textColor="@color/black"
+        android:textColor="@color/mainText"
         android:textSize="11sp"
         android:visibility="gone" />
 

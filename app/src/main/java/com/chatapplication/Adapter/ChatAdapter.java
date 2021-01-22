@@ -89,7 +89,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.imageSeenStatus.setVisibility(View.GONE);
             holder.imageSeenStatusText.setVisibility(View.GONE);
             holder.show_message.setText(chat.getMessage());
-            holder.msgTime.setText(chat.getTime().getHours() + ":" + chat.getTime().getMinutes());
+            String time = chat.getTime().getHours() + ":" + chat.getTime().getMinutes();
+            if(imageUrl.equals("imp"))
+                time = chat.getTime().toLocaleString();
+            holder.msgTime.setText(time);
         } else {
             holder.show_message.setVisibility(View.GONE);
             holder.seenStatus.setVisibility(View.GONE);
@@ -97,7 +100,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.imageView.setVisibility(View.VISIBLE);
             holder.msgTime2.setVisibility(View.VISIBLE);
             holder.msgTime.setVisibility(View.GONE);
-            holder.msgTime2.setText(chat.getTime().getHours() + ":" + chat.getTime().getMinutes());
+            String time = chat.getTime().getHours() + ":" + chat.getTime().getMinutes();
+            if(imageUrl.equals("imp"))
+                time = chat.getTime().toLocaleString();
+            holder.msgTime2.setText(time);
             holder.imageType.setVisibility(View.VISIBLE);
             String first = type.substring(0, 1);
             String remaining = type.substring(1);
@@ -176,7 +182,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Glide.with(mContext).load(imageUrl).into(holder.profile_image);
             }
         }
-        if (!imageUrl.equals("group") && position == mChats.size() - 1 && viewType != MSG_TYPE_LEFT) {
+        if (!imageUrl.equals("group") && position == mChats.size() - 1 && viewType != MSG_TYPE_LEFT && !imageUrl.equals("imp")) {
             if (type.equals("text")) {
                 holder.seenStatus.setVisibility(View.VISIBLE);
                 holder.seenStatusText.setVisibility(View.VISIBLE);
