@@ -113,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(whatToOpen, R.mipmap.ic_launcher, username + message, title,
+                    Data data = new Data(whatToOpen, R.mipmap.launcher_icon, username + message, title,
                             receiver, type);
                     APIService apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
