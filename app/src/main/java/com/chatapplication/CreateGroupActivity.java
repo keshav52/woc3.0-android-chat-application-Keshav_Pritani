@@ -145,7 +145,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         hashMap.put("status", groupDescriptionEditText.getText().toString());
         hashMap.put("imageURL", groupIconUrl);
         hashMap.put("created on", d);
-        hashMap.put("creator", userid);
+//        hashMap.put("creator", userid);
         hashMap.put("lastSeen", "");
 
 

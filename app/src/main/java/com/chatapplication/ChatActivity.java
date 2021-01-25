@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.OpenableColumns;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -60,6 +62,9 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +72,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -76,6 +87,7 @@ import retrofit2.Response;
 public class ChatActivity extends AppCompatActivity {
 
     public static final int IMAGE_REQUEST = 101, PDF_REQUEST = 102, WORD_REQUEST = 103;
+    public static final byte[] encrytionKey = {2, 41, -53, 124, -58, -42, 5, 62, 69, 12, -94, 31, -43, 12, 50, 34};
     FusedLocationProviderClient fusedLocationProviderClient;
     CircleImageView profile_image;
     TextView username;
@@ -90,6 +102,7 @@ public class ChatActivity extends AppCompatActivity {
     boolean notify = false;
     ValueEventListener seenListener;
     private Uri imageUri;
+
     private StorageTask<UploadTask.TaskSnapshot> uploadTask;
 
     public static void sendNotifiaction(String receiver, final String username, final String message, String title, String whatToOpen, String type, Context c) {
@@ -110,12 +123,7 @@ public class ChatActivity extends AppCompatActivity {
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(@NotNull Call<MyResponse> call, @NotNull Response<MyResponse> response) {
-                                    if (response.code() == 200) {
-                                        assert response.body() != null;
-                                        if (response.body().success != 1) {
-                                            Toast.makeText(c, "Failed!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
+
                                 }
 
                                 @Override
@@ -131,6 +139,60 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @SuppressLint("GetInstance")
+    public static String encryptMessage(String message) {
+        Cipher cipher;
+        SecretKeySpec secretKeySpec = new SecretKeySpec(encrytionKey, "AES");
+
+        String finalMessage = null;
+        try {
+            cipher = Cipher.getInstance("AES");
+            byte[] messageByte = message.getBytes();
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+            byte[] encrytedByte = cipher.doFinal(messageByte);
+            finalMessage = new String(encrytedByte, StandardCharsets.ISO_8859_1);
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return finalMessage;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @SuppressLint("GetInstance")
+    public static String decryptMessage(String message) {
+        String finalMessage = null;
+        try {
+            Cipher decipher = Cipher.getInstance("AES");
+            byte[] messageByte = message.getBytes(StandardCharsets.ISO_8859_1);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(encrytionKey, "AES");
+            decipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+            byte[] encrytedByte = decipher.doFinal(messageByte);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                finalMessage = new String(encrytedByte, StandardCharsets.ISO_8859_1);
+            }
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return finalMessage;
     }
 
     @Override
@@ -196,6 +258,7 @@ public class ChatActivity extends AppCompatActivity {
         seenMessage(userid);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void sendBTNClicked(View view) {
         notify = true;
         String msg = text_send.getText().toString();
@@ -230,6 +293,8 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @SuppressLint("GetInstance")
     private void sendMessage(String sender, final String receiver, String message, String type) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -238,14 +303,12 @@ public class ChatActivity extends AppCompatActivity {
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("type", type);
-        hashMap.put("message", message);
+        hashMap.put("message", encryptMessage(message));
         hashMap.put("time", new Date());
         hashMap.put("isseen", false);
         String key = reference.child("Chats").push().getKey();
         assert key != null;
         reference.child("Chats").child(key).setValue(hashMap);
-
-        final String msg = message;
 
         DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatsLists");
         chatRef.child(sender).child(receiver).child("last_message").setValue(key);
@@ -257,6 +320,17 @@ public class ChatActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 if (notify) {
                     assert user != null;
+                    String msg;
+                    if (type.equals("text"))
+                        msg = message;
+                    else {
+                        msg = "Sent ";
+                        if (type.equals("image")) msg += "an";
+                        else msg += "a";
+                        msg += ' ' + type;
+                        if (!type.equals("image") && !type.equals("location"))
+                            msg += " document";
+                    }
                     sendNotifiaction(receiver, user.getName(), ": " + msg, "New Message", fuser.getUid(), "chat", ChatActivity.this);
                 }
                 notify = false;
@@ -284,10 +358,10 @@ public class ChatActivity extends AppCompatActivity {
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
                         mchats.add(chat);
                     }
-
-                    messageAdapter = new ChatAdapter(ChatActivity.this, mchats, imageurl);
-                    recyclerView.setAdapter(messageAdapter);
                 }
+
+                messageAdapter = new ChatAdapter(ChatActivity.this, mchats, imageurl);
+                recyclerView.setAdapter(messageAdapter);
             }
 
             @Override
@@ -331,6 +405,7 @@ public class ChatActivity extends AppCompatActivity {
         this.finish();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -352,6 +427,7 @@ public class ChatActivity extends AppCompatActivity {
                 default:
                     type = "any";
             }
+            notify = true;
             uploadFile(type);
         }
     }
@@ -380,6 +456,7 @@ public class ChatActivity extends AppCompatActivity {
                 intent.setType("*/*");
                 startActivityForResult(intent, 0);
             } else if (which == 4) {
+                notify=true;
                 shareLocation();
             }
         });
@@ -396,14 +473,15 @@ public class ChatActivity extends AppCompatActivity {
 
                     }).show();
         } else {
-            final ProgressDialog pd = new ProgressDialog(this);
-            pd.setMessage("Shraing Location");
-            pd.show();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                final ProgressDialog pd = new ProgressDialog(this);
+                pd.setMessage("Shraing Location");
+                pd.show();
                 fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
                     final Location[] location = {task.getResult()};
                     LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(10000).setFastestInterval(1000).setNumUpdates(1);
                     LocationCallback locationCallback = new LocationCallback() {
+                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                         @Override
                         public void onLocationResult(LocationResult locationResult) {
                             location[0] = locationResult.getLastLocation();
@@ -442,6 +520,7 @@ public class ChatActivity extends AppCompatActivity {
         return name;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void uploadFile(String type) {
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Uploading");

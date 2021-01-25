@@ -12,10 +12,10 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/ic_baseline_person_241"
+        app:civ_border_color="@color/mainText"
+        app:civ_border_width="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:civ_border_width="2dp"
-        app:civ_border_color="@color/mainText"
         tools:ignore="VectorDrawableCompat" />
 
     <TextView

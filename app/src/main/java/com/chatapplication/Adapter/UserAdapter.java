@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import static com.chatapplication.ChatActivity.decryptMessage;
 import static com.chatapplication.ChatActivity.sendNotifiaction;
 import static com.chatapplication.GroupChatActivity.groupId;
 import static com.chatapplication.GroupChatActivity.groupName;
@@ -261,6 +264,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                             Chat chat = dataSnapshot.getValue(Chat.class);
                             if (chat != null) {
                                 FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).addValueEventListener(new ValueEventListener() {
+                                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         theLastMessage = "";
@@ -270,7 +274,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                             theLastMessage += Objects.requireNonNull(snapshot.child("name").getValue()).toString() + ": ";
                                         }
                                         if (chat.getType().equals("text"))
-                                            theLastMessage += chat.getMessage();
+                                            theLastMessage += decryptMessage(chat.getMessage());
                                         else {
                                             theLastMessage += "Sent ";
                                             if (chat.getType().equals("image"))
@@ -342,6 +346,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 final boolean[] flag = {false};
                 final boolean[] seen = {false};
                 reference.addValueEventListener(new ValueEventListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -353,7 +358,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                 if (chat.getSender().equals(firebaseUser.getUid()))
                                     theLastMessage += "You: ";
                                 if (chat.getType().equals("text"))
-                                    theLastMessage += chat.getMessage();
+                                    theLastMessage += decryptMessage(chat.getMessage());
                                 else {
                                     theLastMessage += "Sent ";
                                     if (chat.getType().equals("image")) theLastMessage += "an ";

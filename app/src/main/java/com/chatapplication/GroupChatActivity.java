@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.OpenableColumns;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,6 +63,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.chatapplication.ChatActivity.PDF_REQUEST;
 import static com.chatapplication.ChatActivity.WORD_REQUEST;
+import static com.chatapplication.ChatActivity.encryptMessage;
 import static com.chatapplication.ChatActivity.sendNotifiaction;
 import static com.chatapplication.GroupAddParticipantsActivity.groupId1;
 import static com.chatapplication.UserProfileActivity.IMAGE_REQUEST;
@@ -156,6 +159,7 @@ public class GroupChatActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void sendBTNClicked(View view) {
         notify = true;
         String msg = text_send.getText().toString();
@@ -167,6 +171,7 @@ public class GroupChatActivity extends AppCompatActivity {
         text_send.setText("");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void sendMessage(String sender, String message, String type) {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Groups").child(groupId);
@@ -174,19 +179,29 @@ public class GroupChatActivity extends AppCompatActivity {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("type", type);
-        hashMap.put("message", message);
+        hashMap.put("message", encryptMessage(message));
         hashMap.put("time", new Date());
         String key = reference.child("Messages").push().getKey();
         assert key != null;
         reference.child("Messages").child(key).setValue(hashMap);
 
-        final String msg = message;
         reference.child("lastSeen").setValue(key);
         reference.child("participants").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (!fuser.getUid().equals(snapshot.getKey()) && notify) {
+                        String msg;
+                        if (type.equals("text"))
+                            msg = message;
+                        else {
+                            msg = "Sent ";
+                            if (type.equals("image")) msg += "an";
+                            else msg += "a";
+                            msg += ' ' + type;
+                            if (!type.equals("image") && !type.equals("location"))
+                                msg += " document";
+                        }
                         sendNotifiaction(snapshot.getKey(), title.getText().toString() + ": " + myName, ": " + msg, "New Group Message", groupId, "group", GroupChatActivity.this);
                     }
                 }
@@ -224,6 +239,7 @@ public class GroupChatActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -245,6 +261,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 default:
                     type = "any";
             }
+            notify = true;
             uploadFile(type);
         }
     }
@@ -273,6 +290,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 intent.setType("*/*");
                 startActivityForResult(intent, 0);
             } else if (which == 4) {
+                notify=true;
                 shareLocation();
             }
         });
@@ -298,6 +316,7 @@ public class GroupChatActivity extends AppCompatActivity {
                     final Location[] location = {task.getResult()};
                     LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(10000).setFastestInterval(1000).setNumUpdates(1);
                     LocationCallback locationCallback = new LocationCallback() {
+                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                         @Override
                         public void onLocationResult(LocationResult locationResult) {
                             location[0] = locationResult.getLastLocation();
@@ -336,6 +355,7 @@ public class GroupChatActivity extends AppCompatActivity {
         return name;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void uploadFile(String type) {
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Uploading");

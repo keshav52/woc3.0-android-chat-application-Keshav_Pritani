@@ -14,40 +14,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@color/mainText" >
+        app:titleTextColor="@color/mainText">
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/groupIcon"
-            android:layout_width="40dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_person_241"
-            app:civ_border_width="1dp"
-            app:civ_border_color="@color/mainText"
-            android:layout_height="40dp"
-            tools:ignore="VectorDrawableCompat" />
-        <TextView
-            android:id="@+id/groupTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Keshav"
-            android:layout_toEndOf="@+id/groupIcon"
-            android:textSize="18sp"
-            app:titleTextColor="@color/mainText"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/groupIcon" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/groupIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_person_241"
+                app:civ_border_color="@color/mainText"
+                app:civ_border_width="1dp"
+                tools:ignore="VectorDrawableCompat" />
+
+            <TextView
+                android:id="@+id/groupTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/groupIcon"
+                android:layout_toRightOf="@+id/groupIcon"
+                android:text="Keshav"
+                android:textSize="18sp"
+                app:titleTextColor="@color/mainText" />
+
             <TextView
                 android:id="@+id/participants"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:text="Participants"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="22dp"
                 android:layout_toEndOf="@+id/groupIcon"
                 android:layout_toRightOf="@+id/groupIcon"
-                android:layout_marginTop="22dp"
-                android:layout_marginLeft="10dp"
+                android:text="Participants"
+                android:textSize="10sp"
                 tools:ignore="SmallSp" />
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
