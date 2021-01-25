@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -26,8 +28,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
+import static com.chatapplication.ChatActivity.decryptMessage;
+import static com.chatapplication.ChatActivity.encrytionKey;
 
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
@@ -59,21 +73,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @SuppressLint({"SetTextI18n", "GetInstance"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat chat = mChats.get(position);
         String type = chat.getType();
         DBHelper DB = new DBHelper(holder.itemView.getContext());
+        String message;
         if (!imageUrl.equals("imp")) {
+            message = decryptMessage(chat.getMessage());
             holder.itemView.setOnLongClickListener(v -> {
-                if (DB.insertData(chat.getSender(), chat.getReceiver(), chat.getMessage(), chat.getType(), chat.getTime().toLocaleString()))
+                if (DB.insertData(chat.getSender(), chat.getReceiver(), message, chat.getType(), chat.getTime().toLocaleString()))
                     Toast.makeText(mContext, "This Message was added to Important Messages", Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(mContext, "This Message was not added to Important Messages", Toast.LENGTH_LONG).show();
                 return true;
             });
         } else {
+            message = chat.getMessage();
             holder.itemView.setOnLongClickListener(v -> {
                 if (DB.deleteData(chat.getMessage())) {
                     Toast.makeText(mContext, "This Message was deleted from Important Messages", Toast.LENGTH_LONG).show();
@@ -88,7 +106,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.imageView.setVisibility(View.GONE);
             holder.imageSeenStatus.setVisibility(View.GONE);
             holder.imageSeenStatusText.setVisibility(View.GONE);
-            holder.show_message.setText(chat.getMessage());
+
+            holder.show_message.setText(message);
             String time = chat.getTime().getHours() + ":" + chat.getTime().getMinutes();
             if(imageUrl.equals("imp"))
                 time = chat.getTime().toLocaleString();
@@ -111,7 +130,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             switch (type) {
                 case "image":
                     holder.imageType.setVisibility(View.GONE);
-                    Glide.with(mContext).load(chat.getMessage()).into(holder.imageView);
+                    Glide.with(mContext).load(message).into(holder.imageView);
                     break;
                 case "pdf":
                     holder.imageView.setImageResource(R.drawable.pdf_image);
@@ -127,7 +146,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             }
             if (!imageUrl.equals("imp")) {
                 holder.imageView.setOnLongClickListener(v -> {
-                    if (DB.insertData(chat.getSender(), chat.getReceiver(), chat.getMessage(), chat.getType(), chat.getTime().toLocaleString()))
+                    if (DB.insertData(chat.getSender(), chat.getReceiver(), message, chat.getType(), chat.getTime().toLocaleString()))
                         Toast.makeText(mContext, "This Message was added to Important Messages", Toast.LENGTH_LONG).show();
                     else
                         Toast.makeText(mContext, "This Message was not added to Important Messages", Toast.LENGTH_LONG).show();
@@ -135,7 +154,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 });
             } else {
                 holder.imageView.setOnLongClickListener(v -> {
-                    if (DB.deleteData(chat.getMessage())) {
+                    if (DB.deleteData(message)) {
                         Toast.makeText(mContext, "This Message was deleted from Important Messages", Toast.LENGTH_LONG).show();
                         mContext.startActivity(new Intent(mContext, ImportantMessageActivity.class));
                         ((Activity) mContext).finish();
@@ -147,11 +166,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             holder.imageView.setOnClickListener(v -> {
                 if (!chat.getType().equals("location")) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(chat.getMessage()));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(message));
                     holder.imageView.getContext().startActivity(intent);
                 } else {
                     Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse("geo:" + chat.getMessage()));
+                    i.setData(Uri.parse("geo:" + message));
                     Intent chooser = Intent.createChooser(i, "Launch Maps");
                     holder.itemView.getContext().startActivity(chooser);
                 }
