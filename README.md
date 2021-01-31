@@ -12,3 +12,5 @@
 9. Group Profile - Creator and Admin can change the information of change.
 10. A user has also option to leave from a group.
 11. A user can add/remove a sent/received message to his/her important messages section, this data will be save locally in the user's phone.
+
+Demonstration of features of this Chat Application - https://drive.google.com/file/d/17cKtrgmagYJ0vaaBiU3s8K6oI-49HpO5/view?usp=sharing
